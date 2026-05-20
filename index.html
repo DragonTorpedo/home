@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website Hub</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --accent-color: #c5a059; /* Luxury Gold Accent */
+            --text-main: #ffffff;
+            --text-muted: #a8a8a8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .hub-container {
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        .profile-img {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .links-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hub-button {
+            display: block;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .hub-button:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(197, 160, 89, 0.05);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="hub-container">
+    <header>
+        <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-img">
+        <h1>My Web Directory</h1>
+        <p>A central hub for all my projects and platforms</p>
+    </header>
+
+    <main class="links-wrapper">
+        <a href="https://dragontorpedo.github.io/habitchecker/" target="_blank" class="hub-button">🌐 HabitChecker</a>
+        <a href="https://dragontorpedo.github.io/aiusageguide/" target="_blank" class="hub-button">⚡ Ai Guide</a>
+        <a href="https://your-third-website.com" target="_blank" class="hub-button">📈 Portfolio Dashboard</a>
+        <a href="https://github.com/dragontorpedo" target="_blank" class="hub-button">🐙 Official GitHub Profile</a>
+    </main>
+</div>
+
+</body>
+</html>
