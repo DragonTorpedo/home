@@ -9,12 +9,41 @@
 
     <style>
         :root {
-            --bg-color: #07080a; /* Ultra Dark Deep Obsidian */
-            --card-bg: rgba(21, 26, 35, 0.65); /* Glassmorphism Base */
-            --accent-gold: #d4af37; /* Metallic Pure Gold */
-            --accent-glow: rgba(212, 175, 55, 0.15);
-            --text-main: #f5f6f8; /* Soft Off-White */
-            --text-muted: #8a919b; /* Platinum Gray */
+            --bg-color: #050608; /* Ultra-deep obsidian black */
+            --card-bg: rgba(15, 20, 28, 0.55); /* Deep velvet glassmorphism */
+            --accent-gold: #d4af37; /* Metallic leaf gold */
+            --gold-glow: rgba(214, 175, 55, 0.25);
+            --text-main: #f5f6f8; /* Crisp platinum white */
+            --text-muted: #8e95a0; /* Polished slate grey */
+            
+            /* Light Mode Variables (Alabaster Silk) */
+            --light-bg: #f9f9fb;
+            --light-card: rgba(255, 255, 255, 0.75);
+            --light-text: #1a1a1a;
+            --light-muted: #666666;
+        }
+
+        /* Ambient Geometric Luxury Pattern Overlay */
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(214, 175, 55, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(214, 175, 55, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Mouse Spotlight Aura Tracking Container */
+        .spotlight-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            background: radial-gradient(circle 180px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), rgba(214, 175, 55, 0.06), transparent 80%);
+            transition: opacity 0.3s ease;
         }
 
         * {
@@ -25,51 +54,155 @@
         }
 
         body {
-            background: radial-gradient(circle at center, #111622 0%, var(--bg-color) 70%);
+            background: radial-gradient(circle at 50% 40%, #121824 0%, var(--bg-color) 75%);
             color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.03em;
+            overflow-x: hidden;
+            transition: background 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Light Mode Switch Override */
+        body.light-theme {
+            background: radial-gradient(circle at 50% 40%, #ffffff 0%, var(--light-bg) 100%);
+            color: var(--light-text);
+        }
+        body.light-theme .bg-pattern {
+            background-image: 
+                linear-gradient(rgba(214, 175, 55, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(214, 175, 55, 0.05) 1px, transparent 1px);
+        }
+        body.light-theme h1, body.light-theme .hub-button {
+            color: var(--light-text);
+        }
+        body.light-theme p, body.light-theme .status-indicator span, body.light-theme .system-clock {
+            color: var(--light-muted);
+        }
+        body.light-theme .hub-button {
+            background-color: var(--light-card);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.6);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        body.light-theme .hub-button:hover {
+            background-color: #ffffff;
+            box-shadow: 0 15px 35px rgba(214, 175, 55, 0.15);
+        }
+
+        /* Ambient Controls Header (Clock & Theme Switcher) */
+        .ambient-controls {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .system-clock {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--accent-gold);
+            cursor: pointer;
+            padding: 8px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        .theme-toggle:hover {
+            opacity: 1;
         }
 
         .hub-container {
             width: 100%;
-            max-width: 460px;
+            max-width: 450px;
             text-align: center;
+            z-index: 5;
+        }
+
+        /* Elegant Status Indicator Badge */
+        .status-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(214, 175, 55, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-gold);
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        .status-indicator span {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         header {
-            margin-bottom: 45px;
+            margin-bottom: 50px;
             position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: luxuryFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Subtle luxury accent line under header */
+        /* Sovereign Gold Foil Shimmer Accent line under header */
         header::after {
             content: '';
             display: block;
-            width: 40px;
+            width: 50px;
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-            margin: 20px auto 0 auto;
+            margin: 24px auto 0 auto;
+            background-size: 200% auto;
+            animation: goldShimmer 6s linear infinite;
         }
 
         h1 {
-            font-size: 2rem;
-            font-weight: 300; /* Sleek high-end thin weight */
-            letter-spacing: 0.08em;
+            font-size: 1.9rem;
+            font-weight: 300; /* Sophisticated thin weight */
+            letter-spacing: 0.15em; /* Exaggerated Luxury Kerning */
             color: var(--text-main);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         p {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 400;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
         }
 
         .links-wrapper {
@@ -78,43 +211,90 @@
             gap: 20px;
         }
 
+        /* Main Directory Premium Glassmorphism Cards */
         .hub-button {
             display: block;
             background-color: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 0.5px solid rgba(255, 255, 255, 0.05); /* Precision Micro-Borders */
             color: var(--text-main);
             text-decoration: none;
-            padding: 18px 24px;
-            border-radius: 12px;
-            font-size: 1rem;
+            padding: 22px 26px;
+            border-radius: 14px;
+            font-size: 0.98rem;
             font-weight: 400;
-            letter-spacing: 0.05em;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Ultra smooth transition */
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            letter-spacing: 0.08em;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.03);
             position: relative;
-            overflow: hidden;
+            opacity: 0;
+            transform: translateY(25px);
+            
+            /* Staggered load animation using kinetic curves */
+            animation: luxuryFadeIn 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
-        /* Ambient subtle gold border on hover */
+        /* Staggered delays for beautiful sequentially rolling arrival */
+        .links-wrapper a:nth-child(1) { animation-delay: 0.2s; }
+        .links-wrapper a:nth-child(2) { animation-delay: 0.35s; }
+        .links-wrapper a:nth-child(3) { animation-delay: 0.5s; }
+        .links-wrapper a:nth-child(4) { animation-delay: 0.65s; }
+
+        .hub-button::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.01) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Kinetic Hover Response curve */
         .hub-button:hover {
-            border-color: rgba(214, 175, 85, 0.4);
-            background-color: rgba(21, 26, 35, 0.8);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 15px var(--accent-glow);
-            color: #ffffff;
+            border-color: rgba(214, 175, 55, 0.5);
+            background-color: rgba(21, 28, 40, 0.75);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px var(--gold-glow);
+            letter-spacing: 0.11em; /* Premium text expansion micro-interaction */
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* Elegant inline separator styling */
-        .hub-button span {
-            margin-right: 8px;
+        @keyframes luxuryFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; box-shadow: 0 0 4px var(--accent-gold); }
+            50% { opacity: 1; box-shadow: 0 0 12px var(--accent-gold); }
+        }
+
+        @keyframes goldShimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
         }
     </style>
 </head>
 <body>
 
+<div class="bg-pattern"></div>
+<div class="spotlight-overlay" id="spotlight"></div>
+
+<div class="ambient-controls">
+    <div class="system-clock" id="live-clock">00:00:00 UTC</div>
+    <button class="theme-toggle" id="theme-btn" title="Toggle Ambient Theme">✦ Ambient</button>
+</div>
+
 <div class="hub-container">
+    <div class="status-container">
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Network Live</span>
+        </div>
+    </div>
+
     <header>
         <h1>Dragontorpedo Web Directory</h1>
         <p>A central hub for all common Dragontorpedo platforms</p>
@@ -127,6 +307,30 @@
         <a href="https://github.com/dragontorpedo" target="_blank" class="hub-button">🐙 Official GitHub Profile</a>
     </main>
 </div>
+
+<script>
+    // 1. Mouse Spotlight Aura Tracking Engine
+    const spotlight = document.getElementById('spotlight');
+    document.addEventListener('mousemove', (e) => {
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    });
+
+    // 2. High-End Minimal Live Clock System
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toUTCString().replace('GMT', 'UTC').split(' ')[4];
+        document.getElementById('live-clock').innerText = `${timeString} UTC`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // 3. Sophisticated Theme Ambient Environment Toggle
+    const themeBtn = document.getElementById('theme-btn');
+    themeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+    });
+</script>
 
 </body>
 </html>
