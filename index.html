@@ -1,336 +1,1150 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" class="no-js">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragontorpedo Web Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>Dragontorpedo Web Directory | Central Hub</title>
+    <meta name="title" content="Dragontorpedo Web Directory">
+    <meta name="description" content="A highly optimized, central routing hub for all official Dragontorpedo platforms, repositories, and applications.">
+    <meta name="author" content="Dragontorpedo">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#050608">
     
     <link rel="icon" type="image/png" href="favicon.png">
 
     <style>
+        /* --------------------------------------------------------------------- */
+        /* 1. DESIGN TOKENS & CSS CUSTOM PROPERTIES (VARIABLES)                  */
+        /* --------------------------------------------------------------------- */
         :root {
-            --bg-color: #050608; /* Ultra-deep obsidian black */
-            --card-bg: rgba(15, 20, 28, 0.55); /* Deep velvet glassmorphism */
-            --accent-gold: #d4af37; /* Metallic leaf gold */
-            --gold-glow: rgba(214, 175, 55, 0.25);
-            --text-main: #f5f6f8; /* Crisp platinum white */
-            --text-muted: #8e95a0; /* Polished slate grey */
+            /* Core Palette - Dark Mode (Default) */
+            --color-bg-primary: #050608;
+            --color-bg-secondary: #0a0d14;
+            --color-bg-tertiary: #121824;
             
-            /* Light Mode Variables (Alabaster Silk) */
-            --light-bg: #f9f9fb;
-            --light-card: rgba(255, 255, 255, 0.75);
-            --light-text: #1a1a1a;
-            --light-muted: #666666;
+            /* Glassmorphism & Surface Tokens */
+            --color-surface-glass: rgba(15, 20, 28, 0.55);
+            --color-surface-hover: rgba(21, 28, 40, 0.85);
+            --color-surface-border: rgba(255, 255, 255, 0.05);
+            --color-surface-border-hover: rgba(214, 175, 55, 0.5);
+            
+            /* Typography Colors */
+            --color-text-primary: #f5f6f8;
+            --color-text-secondary: #8e95a0;
+            --color-text-inverse: #050608;
+            
+            /* Accent & Brand Colors */
+            --color-accent-primary: #d4af37;
+            --color-accent-glow: rgba(214, 175, 55, 0.25);
+            --color-accent-subtle: rgba(214, 175, 55, 0.06);
+            
+            /* Status Colors */
+            --color-status-live: #d4af37;
+            --color-status-live-glow: rgba(214, 175, 55, 0.4);
+            
+            /* Typography Scale (Fluid) */
+            --font-family-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-family-mono: 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
+            
+            --text-xs: clamp(0.65rem, 0vw + 0.65rem, 0.65rem);
+            --text-sm: clamp(0.75rem, 0vw + 0.75rem, 0.75rem);
+            --text-base: clamp(0.85rem, 1vw + 0.7rem, 0.98rem);
+            --text-lg: clamp(1rem, 1.5vw + 0.8rem, 1.25rem);
+            --text-xl: clamp(1.5rem, 3vw + 1rem, 1.9rem);
+            
+            /* Spacing Scale */
+            --space-2xs: 0.25rem;
+            --space-xs: 0.5rem;
+            --space-sm: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2.5rem;
+            --space-2xl: 4rem;
+            
+            /* Animation & Transition Timings */
+            --ease-kinetic: cubic-bezier(0.25, 1, 0.5, 1);
+            --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --duration-slow: 500ms;
+            --duration-epic: 1200ms;
+            
+            /* Z-Index Layout Mapping */
+            --z-canvas: -1;
+            --z-pattern: 1;
+            --z-aura: 2;
+            --z-content: 10;
+            --z-controls: 20;
+            --z-modal: 100;
         }
 
-        /* Ambient Geometric Luxury Pattern Overlay */
-        .bg-pattern {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(214, 175, 55, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(214, 175, 55, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center;
-            pointer-events: none;
-            z-index: 1;
+        /* --------------------------------------------------------------------- */
+        /* 2. THEME OVERRIDES (LIGHT MODE)                                       */
+        /* --------------------------------------------------------------------- */
+        [data-theme="light"] {
+            /* Core Palette - Light Mode */
+            --color-bg-primary: #f9f9fb;
+            --color-bg-secondary: #f0f0f4;
+            --color-bg-tertiary: #e4e5eb;
+            
+            /* Glassmorphism & Surface Tokens */
+            --color-surface-glass: rgba(255, 255, 255, 0.75);
+            --color-surface-hover: rgba(255, 255, 255, 1);
+            --color-surface-border: rgba(0, 0, 0, 0.05);
+            --color-surface-border-hover: rgba(214, 175, 55, 0.6);
+            
+            /* Typography Colors */
+            --color-text-primary: #1a1a1a;
+            --color-text-secondary: #666666;
+            --color-text-inverse: #ffffff;
+            
+            /* Accent Adjustments for Light Mode */
+            --color-accent-primary: #b89326;
+            --color-accent-glow: rgba(184, 147, 38, 0.15);
+            --color-accent-subtle: rgba(184, 147, 38, 0.04);
+            
+            /* Status Colors */
+            --color-status-live: #b89326;
+            --color-status-live-glow: rgba(184, 147, 38, 0.3);
         }
 
-        /* Mouse Spotlight Aura Tracking Container */
-        .spotlight-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 2;
-            background: radial-gradient(circle 180px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), rgba(214, 175, 55, 0.06), transparent 80%);
-            transition: opacity 0.3s ease;
-        }
-
-        * {
+        /* --------------------------------------------------------------------- */
+        /* 3. CSS RESET & GLOBAL NORMALIZE                                       */
+        /* --------------------------------------------------------------------- */
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth;
         }
 
         body {
-            background: radial-gradient(circle at 50% 40%, #121824 0%, var(--bg-color) 75%);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: var(--font-family-sans);
+            color: var(--color-text-primary);
+            background-color: var(--color-bg-primary);
             min-height: 100vh;
-            padding: 40px 20px;
-            letter-spacing: 0.03em;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             overflow-x: hidden;
-            transition: background 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            letter-spacing: 0.03em;
+            position: relative;
+            transition: background-color var(--duration-epic) var(--ease-kinetic),
+                        color var(--duration-normal) var(--ease-kinetic);
         }
 
-        /* Light Mode Switch Override */
-        body.light-theme {
-            background: radial-gradient(circle at 50% 40%, #ffffff 0%, var(--light-bg) 100%);
-            color: var(--light-text);
+        /* Ambient Background Gradients */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 40%, var(--color-bg-tertiary) 0%, var(--color-bg-primary) 75%);
+            z-index: var(--z-canvas);
+            pointer-events: none;
+            transition: background var(--duration-epic) var(--ease-kinetic);
         }
-        body.light-theme .bg-pattern {
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Accessibility Focus States */
+        :focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 4. BACKGROUND SYSTEMS & CANVASES                                      */
+        /* --------------------------------------------------------------------- */
+        
+        /* Particle Engine Canvas Canvas */
+        .system-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: var(--z-canvas);
+            pointer-events: none;
+            opacity: 0.6;
+            transition: opacity var(--duration-epic) var(--ease-kinetic);
+        }
+
+        [data-theme="light"] .system-canvas {
+            opacity: 0.3;
+        }
+
+        /* Geometric Blueprint Pattern Overlay */
+        .system-pattern {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
             background-image: 
-                linear-gradient(rgba(214, 175, 55, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(214, 175, 55, 0.05) 1px, transparent 1px);
-        }
-        body.light-theme h1, body.light-theme .hub-button {
-            color: var(--light-text);
-        }
-        body.light-theme p, body.light-theme .status-indicator span, body.light-theme .system-clock {
-            color: var(--light-muted);
-        }
-        body.light-theme .hub-button {
-            background-color: var(--light-card);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.6);
-            border: 1px solid rgba(0,0,0,0.03);
-        }
-        body.light-theme .hub-button:hover {
-            background-color: #ffffff;
-            box-shadow: 0 15px 35px rgba(214, 175, 55, 0.15);
+                linear-gradient(var(--color-accent-subtle) 1px, transparent 1px),
+                linear-gradient(90deg, var(--color-accent-subtle) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+            pointer-events: none;
+            z-index: var(--z-pattern);
+            opacity: 0.5;
+            transition: opacity var(--duration-normal) var(--ease-kinetic);
         }
 
-        /* Ambient Controls Header (Clock & Theme Switcher) */
-        .ambient-controls {
+        /* Dynamic Mouse Spotlight Tracking */
+        .system-spotlight {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
+            pointer-events: none;
+            z-index: var(--z-aura);
+            background: radial-gradient(
+                circle 250px at var(--mouse-x, 50vw) var(--mouse-y, 50vh), 
+                var(--color-accent-subtle), 
+                transparent 80%
+            );
+            transition: opacity var(--duration-normal) ease;
+            will-change: background;
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 5. TOP CONTROLS (CLOCK & THEME)                                       */
+        /* --------------------------------------------------------------------- */
+        .controls-header {
             position: absolute;
-            top: 24px;
-            left: 24px;
-            right: 24px;
+            top: var(--space-xl);
+            left: var(--space-xl);
+            right: var(--space-xl);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
+            z-index: var(--z-controls);
         }
 
-        .system-clock {
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        .controls-clock {
+            font-family: var(--font-family-mono);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
             letter-spacing: 0.15em;
             text-transform: uppercase;
-        }
-
-        .theme-toggle {
-            background: transparent;
-            border: none;
-            color: var(--accent-gold);
-            cursor: pointer;
-            padding: 8px;
-            font-size: 0.9rem;
-            opacity: 0.6;
-            transition: opacity 0.3s ease;
-        }
-        .theme-toggle:hover {
-            opacity: 1;
-        }
-
-        .hub-container {
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-            z-index: 5;
-        }
-
-        /* Elegant Status Indicator Badge */
-        .status-container {
+            user-select: none;
             display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .status-indicator {
-            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(214, 175, 55, 0.15);
-            padding: 6px 14px;
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
+            gap: var(--space-xs);
         }
 
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background-color: var(--accent-gold);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-gold);
-            animation: pulseGlow 2s infinite ease-in-out;
-        }
-
-        .status-indicator span {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        header {
-            margin-bottom: 50px;
-            position: relative;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: luxuryFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* Sovereign Gold Foil Shimmer Accent line under header */
-        header::after {
+        .controls-clock::before {
             content: '';
             display: block;
-            width: 50px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
-            margin: 24px auto 0 auto;
-            background-size: 200% auto;
-            animation: goldShimmer 6s linear infinite;
+            width: 4px;
+            height: 4px;
+            background-color: var(--color-text-secondary);
+            border-radius: 50%;
+            opacity: 0.5;
         }
 
-        h1 {
-            font-size: 1.9rem;
-            font-weight: 300; /* Sophisticated thin weight */
-            letter-spacing: 0.15em; /* Exaggerated Luxury Kerning */
-            color: var(--text-main);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        .controls-theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--color-accent-primary);
+            font-size: var(--text-base);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            opacity: 0.7;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 20px;
+            transition: all var(--duration-normal) var(--ease-kinetic);
+            background: rgba(0,0,0,0);
         }
 
-        p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 400;
-            letter-spacing: 0.08em;
+        .controls-theme-toggle:hover {
+            opacity: 1;
+            background: var(--color-surface-glass);
+            transform: translateY(-1px);
         }
 
-        .links-wrapper {
+        .controls-theme-toggle:active {
+            transform: translateY(1px);
+        }
+
+        .controls-theme-icon {
+            display: inline-block;
+            transition: transform var(--duration-epic) var(--ease-bounce);
+        }
+
+        [data-theme="light"] .controls-theme-icon {
+            transform: rotate(180deg);
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 6. MAIN HUB CONTAINER                                                 */
+        /* --------------------------------------------------------------------- */
+        .hub-layout {
+            width: 100%;
+            max-width: 480px;
+            padding: var(--space-xl) var(--space-md);
+            text-align: center;
+            z-index: var(--z-content);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: var(--space-xl);
+            position: relative;
         }
 
-        /* Main Directory Premium Glassmorphism Cards */
-        .hub-button {
-            display: block;
-            background-color: var(--card-bg);
-            border: 0.5px solid rgba(255, 255, 255, 0.05); /* Precision Micro-Borders */
-            color: var(--text-main);
-            text-decoration: none;
-            padding: 22px 26px;
-            border-radius: 14px;
-            font-size: 0.98rem;
+        /* --------------------------------------------------------------------- */
+        /* 7. STATUS BADGE COMPONENT                                             */
+        /* --------------------------------------------------------------------- */
+        .hub-status {
+            display: flex;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: fade-in-down var(--duration-epic) var(--ease-smooth) forwards;
+            animation-delay: 0.1s;
+        }
+
+        .hub-status__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: var(--color-surface-glass);
+            border: 1px solid var(--color-surface-border);
+            padding: 8px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .hub-status__indicator {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-status-live);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--color-status-live-glow);
+            animation: pulse-glow 2.5s infinite ease-in-out;
+        }
+
+        .hub-status__label {
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--color-text-secondary);
+            font-weight: 700;
+            user-select: none;
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 8. TYPOGRAPHY & HEADER ARCHITECTURE                                   */
+        /* --------------------------------------------------------------------- */
+        .hub-header {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fade-in-up var(--duration-epic) var(--ease-smooth) forwards;
+            animation-delay: 0.2s;
+            position: relative;
+        }
+
+        .hub-header__title {
+            font-size: var(--text-xl);
+            font-weight: 300;
+            letter-spacing: 0.18em;
+            color: var(--color-text-primary);
+            text-transform: uppercase;
+            line-height: 1.2;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .hub-header__subtitle {
+            color: var(--color-text-secondary);
+            font-size: var(--text-base);
             font-weight: 400;
             letter-spacing: 0.08em;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.03);
-            position: relative;
-            opacity: 0;
-            transform: translateY(25px);
-            
-            /* Staggered load animation using kinetic curves */
-            animation: luxuryFadeIn 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            max-width: 80%;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
-        /* Staggered delays for beautiful sequentially rolling arrival */
-        .links-wrapper a:nth-child(1) { animation-delay: 0.2s; }
-        .links-wrapper a:nth-child(2) { animation-delay: 0.35s; }
-        .links-wrapper a:nth-child(3) { animation-delay: 0.5s; }
-        .links-wrapper a:nth-child(4) { animation-delay: 0.65s; }
+        /* Elegant Shimmer Line */
+        .hub-header::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-accent-primary), transparent);
+            margin: var(--space-xl) auto 0 auto;
+            background-size: 200% auto;
+            animation: gold-shimmer 4s linear infinite;
+            opacity: 0.7;
+        }
 
-        .hub-button::before {
+        /* --------------------------------------------------------------------- */
+        /* 9. DIRECTORY NAVIGATION & BUTTONS                                     */
+        /* --------------------------------------------------------------------- */
+        .hub-directory {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            perspective: 1000px;
+        }
+
+        .hub-directory__link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            background-color: var(--color-surface-glass);
+            border: 1px solid var(--color-surface-border);
+            color: var(--color-text-primary);
+            padding: var(--space-lg) var(--space-xl);
+            border-radius: 16px;
+            font-size: var(--text-base);
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.03);
+            overflow: hidden;
+            
+            /* Entry Animation Base States */
+            opacity: 0;
+            transform: translateY(30px) rotateX(-10deg);
+            transform-origin: top center;
+            will-change: transform, opacity, box-shadow;
+            
+            /* Interactive Transitions */
+            transition: 
+                transform var(--duration-slow) var(--ease-kinetic),
+                box-shadow var(--duration-slow) var(--ease-kinetic),
+                background-color var(--duration-normal) var(--ease-kinetic),
+                border-color var(--duration-normal) var(--ease-kinetic),
+                letter-spacing var(--duration-slow) var(--ease-kinetic);
+        }
+
+        /* Light mode specific button shadows */
+        [data-theme="light"] .hub-directory__link {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        /* Sequential Load Animations via CSS nth-child */
+        .hub-directory__link:nth-child(1) { animation: node-enter var(--duration-epic) var(--ease-bounce) forwards 0.3s; }
+        .hub-directory__link:nth-child(2) { animation: node-enter var(--duration-epic) var(--ease-bounce) forwards 0.45s; }
+        .hub-directory__link:nth-child(3) { animation: node-enter var(--duration-epic) var(--ease-bounce) forwards 0.6s; }
+        .hub-directory__link:nth-child(4) { animation: node-enter var(--duration-epic) var(--ease-bounce) forwards 0.75s; }
+
+        /* Pseudo-element for inner premium gradient sheen */
+        .hub-directory__link::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 14px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.01) 0%, transparent 100%);
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
             pointer-events: none;
+            z-index: 1;
+            transition: opacity var(--duration-normal) ease;
         }
 
-        /* Kinetic Hover Response curve */
-        .hub-button:hover {
-            border-color: rgba(214, 175, 55, 0.5);
-            background-color: rgba(21, 28, 40, 0.75);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px var(--gold-glow);
-            letter-spacing: 0.11em; /* Premium text expansion micro-interaction */
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        [data-theme="light"] .hub-directory__link::before {
+            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%);
         }
 
-        @keyframes luxuryFadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        /* Hover Physics & Micro-interactions */
+        .hub-directory__link:hover,
+        .hub-directory__link:focus-visible {
+            border-color: var(--color-surface-border-hover);
+            background-color: var(--color-surface-hover);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4), 
+                0 0 30px var(--color-accent-glow);
+            letter-spacing: 0.12em;
+            outline: none; /* Replaced by border/glow */
+        }
+
+        [data-theme="light"] .hub-directory__link:hover {
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.08), 
+                0 0 30px var(--color-accent-glow);
+        }
+
+        .hub-directory__icon {
+            font-size: 1.2em;
+            margin-right: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            transition: transform var(--duration-normal) var(--ease-bounce);
+        }
+
+        .hub-directory__link:hover .hub-directory__icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .hub-directory__text {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 10. KEYFRAME ANIMATIONS DICTIONARY                                    */
+        /* --------------------------------------------------------------------- */
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fade-in-down {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes node-enter {
+            0% { 
+                opacity: 0; 
+                transform: translateY(40px) rotateX(-15deg); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) rotateX(0deg); 
             }
         }
 
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.6; box-shadow: 0 0 4px var(--accent-gold); }
-            50% { opacity: 1; box-shadow: 0 0 12px var(--accent-gold); }
+        @keyframes pulse-glow {
+            0%   { opacity: 0.5; box-shadow: 0 0 4px var(--color-status-live); }
+            50%  { opacity: 1;   box-shadow: 0 0 16px var(--color-status-live); }
+            100% { opacity: 0.5; box-shadow: 0 0 4px var(--color-status-live); }
         }
 
-        @keyframes goldShimmer {
-            0% { background-position: 0% 50%; }
+        @keyframes gold-shimmer {
+            0%   { background-position: -100% 50%; }
             100% { background-position: 200% 50%; }
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 11. MEDIA QUERIES & RESPONSIVE DESIGN                                 */
+        /* --------------------------------------------------------------------- */
+        @media (max-width: 768px) {
+            .controls-header {
+                top: var(--space-md);
+                left: var(--space-md);
+                right: var(--space-md);
+            }
+            
+            .hub-layout {
+                padding: var(--space-xl) var(--space-md) var(--space-2xl) var(--space-md);
+                gap: var(--space-lg);
+            }
+            
+            .hub-header__title {
+                letter-spacing: 0.12em;
+            }
+            
+            .hub-directory__link {
+                padding: var(--space-md) var(--space-lg);
+                letter-spacing: 0.05em;
+            }
+            
+            .hub-directory__link:hover {
+                letter-spacing: 0.08em;
+                transform: translateY(-4px) scale(1.01);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .controls-clock {
+                display: none; /* Hide clock on tiny screens to save space */
+            }
+            .controls-header {
+                justify-content: flex-end;
+            }
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* 12. ACCESSIBILITY (A11Y) REDUCED MOTION PREFERENCES                   */
+        /* --------------------------------------------------------------------- */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            
+            .system-canvas,
+            .system-spotlight {
+                display: none !important;
+            }
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
-<div class="bg-pattern"></div>
-<div class="spotlight-overlay" id="spotlight"></div>
+    <canvas id="particleCanvas" class="system-canvas" aria-hidden="true"></canvas>
+    
+    <div class="system-pattern" aria-hidden="true"></div>
+    
+    <div class="system-spotlight" id="spotlightAura" aria-hidden="true"></div>
 
-<div class="ambient-controls">
-    <div class="system-clock" id="live-clock">00:00:00 UTC</div>
-    <button class="theme-toggle" id="theme-btn" title="Toggle Ambient Theme">✦ Ambient</button>
-</div>
-
-<div class="hub-container">
-    <div class="status-container">
-        <div class="status-indicator">
-            <div class="status-dot"></div>
-            <span>Network Live</span>
+    <header class="controls-header">
+        <div class="controls-clock" id="systemClock" aria-label="Current System Time">
+            <span id="clockTime">00:00:00</span>
+            <span id="clockZone">UTC</span>
         </div>
-    </div>
-
-    <header>
-        <h1>Dragontorpedo Web Directory</h1>
-        <p>A central hub for all common Dragontorpedo platforms</p>
+        
+        <button class="controls-theme-toggle" id="themeToggleBtn" aria-label="Toggle between dark and light ambient modes">
+            <span class="controls-theme-icon" id="themeIcon">✦</span>
+            <span class="controls-theme-text">Ambient</span>
+        </button>
     </header>
 
-    <main class="links-wrapper">
-        <a href="https://github.com/dragontorpedo" target="_blank" class="hub-button">🐙 Official GitHub Profile</a>
-        <a href="https://dragontorpedo.github.io/habitchecker/" target="_blank" class="hub-button">🌱 HabitChecker</a>
-        <a href="https://dragontorpedo.github.io/aiusageguide/" target="_blank" class="hub-button">✦ Ai Guide</a>
-        <a href="https://dragontorpedo.github.io/omegatimer/" target="_blank" class="hub-button">🎛️ Work Dashboard</a>
+    <main class="hub-layout">
+        
+        <section class="hub-status" aria-label="System Status">
+            <div class="hub-status__badge">
+                <div class="hub-status__indicator" aria-hidden="true"></div>
+                <span class="hub-status__label">Network Live</span>
+            </div>
+        </section>
+
+        <header class="hub-header">
+            <h1 class="hub-header__title">Dragontorpedo<br>Directory</h1>
+            <p class="hub-header__subtitle">A central hub for all common Dragontorpedo platforms, applications, and repositories.</p>
+        </header>
+
+        <nav class="hub-directory" aria-label="Primary Directory Links">
+            
+            <a href="https://github.com/dragontorpedo" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="hub-directory__link"
+               aria-label="Visit Official GitHub Profile">
+                <span class="hub-directory__icon" aria-hidden="true">🐙</span>
+                <span class="hub-directory__text">Official GitHub Profile</span>
+            </a>
+            
+            <a href="https://dragontorpedo.github.io/habitchecker/" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="hub-directory__link"
+               aria-label="Launch HabitChecker Application">
+                <span class="hub-directory__icon" aria-hidden="true">🌱</span>
+                <span class="hub-directory__text">HabitChecker</span>
+            </a>
+            
+            <a href="https://dragontorpedo.github.io/aiusageguide/" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="hub-directory__link"
+               aria-label="Read the AI Usage Guide">
+                <span class="hub-directory__icon" aria-hidden="true">✦</span>
+                <span class="hub-directory__text">Ai Guide</span>
+            </a>
+            
+            <a href="https://dragontorpedo.github.io/omegatimer/" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="hub-directory__link"
+               aria-label="Access OmegaTimer Work Dashboard">
+                <span class="hub-directory__icon" aria-hidden="true">🎛️</span>
+                <span class="hub-directory__text">Work Dashboard</span>
+            </a>
+            
+        </nav>
     </main>
-</div>
 
-<script>
-    // 1. Mouse Spotlight Aura Tracking Engine
-    const spotlight = document.getElementById('spotlight');
-    document.addEventListener('mousemove', (e) => {
-        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
-    });
+    <script>
+        /**
+         * @fileoverview Core JavaScript application logic for Dragontorpedo Directory.
+         * Implements ES6+ strict mode, Object-Oriented patterns, and modular design.
+         * Contains subsystems for UI State, Temporal tracking, and Hardware-accelerated Canvas Physics.
+         * @author Dragontorpedo Systems
+         * @version 2.0.0 Enterprise Edition
+         */
+        'use strict';
 
-    // 2. High-End Minimal Live Clock System
-    function updateClock() {
-        const now = new Date();
-        const timeString = now.toUTCString().replace('GMT', 'UTC').split(' ')[4];
-        document.getElementById('live-clock').innerText = `${timeString} UTC`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+        /* --------------------------------------------------------------------- */
+        /* MODULE 1: THEME MANAGEMENT SYSTEM                                     */
+        /* --------------------------------------------------------------------- */
+        /**
+         * Singleton class managing the global application theme (Light/Dark mode).
+         * Utilizes DOM dataset manipulation and localStorage for persistence.
+         */
+        class ThemeManager {
+            constructor() {
+                this.bodyElement = document.body;
+                this.toggleButton = document.getElementById('themeToggleBtn');
+                this.themeIcon = document.getElementById('themeIcon');
+                
+                // Define constant keys to prevent magic strings
+                this.STORAGE_KEY = 'dt_hub_theme_preference';
+                this.THEME_DARK = 'dark';
+                this.THEME_LIGHT = 'light';
+                
+                this.init();
+            }
 
-    // 3. Sophisticated Theme Ambient Environment Toggle
-    const themeBtn = document.getElementById('theme-btn');
-    themeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light-theme');
-    });
-</script>
+            /**
+             * Initializes the theme manager, binds events, and restores saved state.
+             */
+            init() {
+                if (!this.toggleButton) return;
+                
+                // Check local storage or system preference
+                const savedTheme = localStorage.getItem(this.STORAGE_KEY);
+                const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+                
+                // Determine initial state
+                const initialTheme = savedTheme ? savedTheme : (prefersLight ? this.THEME_LIGHT : this.THEME_DARK);
+                this.applyTheme(initialTheme);
 
+                // Bind click event listener using arrow function to preserve lexical 'this'
+                this.toggleButton.addEventListener('click', () => this.toggleTheme());
+            }
+
+            /**
+             * Flips the current theme state.
+             */
+            toggleTheme() {
+                const currentTheme = this.bodyElement.getAttribute('data-theme');
+                const newTheme = currentTheme === this.THEME_DARK ? this.THEME_LIGHT : this.THEME_DARK;
+                this.applyTheme(newTheme);
+            }
+
+            /**
+             * Applies the theme to the DOM and saves to local storage.
+             * @param {string} themeName - The name of the theme ('light' or 'dark')
+             */
+            applyTheme(themeName) {
+                // Set DOM attribute for CSS targeting
+                this.bodyElement.setAttribute('data-theme', themeName);
+                
+                // Update Local Storage
+                localStorage.setItem(this.STORAGE_KEY, themeName);
+                
+                // Update Icon semantics based on theme
+                if (themeName === this.THEME_LIGHT) {
+                    this.themeIcon.innerHTML = '✧'; // Hollow star for light
+                    this.toggleButton.setAttribute('aria-label', 'Switch to Dark Mode');
+                } else {
+                    this.themeIcon.innerHTML = '✦'; // Solid star for dark
+                    this.toggleButton.setAttribute('aria-label', 'Switch to Light Mode');
+                }
+
+                // Dispatch a custom event so the Particle Engine can react to theme changes
+                const themeEvent = new CustomEvent('themeChanged', { detail: { theme: themeName } });
+                window.dispatchEvent(themeEvent);
+            }
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* MODULE 2: HIGH-PRECISION TEMPORAL SYSTEM (CLOCK)                      */
+        /* --------------------------------------------------------------------- */
+        /**
+         * Class responsible for maintaining the highly accurate, zero-drift system clock.
+         * Utilizes requestAnimationFrame for UI updates rather than setInterval for performance.
+         */
+        class ClockSystem {
+            constructor() {
+                this.timeElement = document.getElementById('clockTime');
+                this.isRunning = false;
+                this.lastUpdate = 0;
+                
+                this.init();
+            }
+
+            init() {
+                if (!this.timeElement) return;
+                this.start();
+            }
+
+            /**
+             * Formats a given number into a padded two-digit string.
+             * @param {number} num 
+             * @returns {string} Padded string (e.g., '09')
+             */
+            padZero(num) {
+                return num.toString().padStart(2, '0');
+            }
+
+            /**
+             * The main temporal update function.
+             */
+            update() {
+                const now = new Date();
+                
+                // We only need to update the DOM if the second has actually changed
+                // This prevents needless DOM thrashing 60 times a second
+                const currentSecond = now.getUTCSeconds();
+                
+                if (currentSecond !== this.lastUpdate) {
+                    const h = this.padZero(now.getUTCHours());
+                    const m = this.padZero(now.getUTCMinutes());
+                    const s = this.padZero(currentSecond);
+                    
+                    this.timeElement.textContent = `${h}:${m}:${s}`;
+                    this.lastUpdate = currentSecond;
+                }
+
+                // Recursively loop using the browser's optimized rendering pipeline
+                if (this.isRunning) {
+                    requestAnimationFrame(() => this.update());
+                }
+            }
+
+            start() {
+                this.isRunning = true;
+                this.update();
+            }
+
+            stop() {
+                this.isRunning = false;
+            }
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* MODULE 3: HARDWARE-ACCELERATED AURA TRACKER                           */
+        /* --------------------------------------------------------------------- */
+        /**
+         * Tracks mouse positioning and maps it to CSS custom properties on the root element.
+         * This powers the "Spotlight" effect without requiring heavy JavaScript DOM manipulation.
+         */
+        class AuraTracker {
+            constructor() {
+                this.root = document.documentElement;
+                this.ticking = false;
+                this.mouseX = window.innerWidth / 2;
+                this.mouseY = window.innerHeight / 2;
+                
+                this.init();
+            }
+
+            init() {
+                // Initialize CSS variables to center of screen initially
+                this.updateCSSVariables();
+                
+                // Bind pointer movement (works for both mouse and touch)
+                window.addEventListener('pointermove', (e) => this.handlePointerMove(e), { passive: true });
+            }
+
+            /**
+             * Handles pointer movement using a throttled RAF pattern for maximum 60fps performance.
+             * @param {PointerEvent} e 
+             */
+            handlePointerMove(e) {
+                this.mouseX = e.clientX;
+                this.mouseY = e.clientY;
+
+                if (!this.ticking) {
+                    requestAnimationFrame(() => {
+                        this.updateCSSVariables();
+                        this.ticking = false;
+                    });
+                    this.ticking = true;
+                }
+            }
+
+            updateCSSVariables() {
+                this.root.style.setProperty('--mouse-x', `${this.mouseX}px`);
+                this.root.style.setProperty('--mouse-y', `${this.mouseY}px`);
+            }
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* MODULE 4: VANILLA WEBGL-STYLE CANVAS PARTICLE PHYSICS ENGINE          */
+        /* --------------------------------------------------------------------- */
+        /**
+         * A custom built, highly optimized 2D particle networking engine.
+         * Renders floating geometric nodes that connect when in proximity
+         * and react kinetically to the user's mouse position.
+         */
+        class CanvasParticleEngine {
+            constructor() {
+                this.canvas = document.getElementById('particleCanvas');
+                
+                // Accessibility check: Do not initialize if user prefers reduced motion
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (!this.canvas || prefersReducedMotion) return;
+
+                this.ctx = this.canvas.getContext('2d', { alpha: true });
+                this.particles = [];
+                
+                // Engine Configuration
+                this.config = {
+                    particleCount: this.calculateOptimalParticleCount(),
+                    connectionDistance: 150,
+                    mouseRepelRadius: 120,
+                    particleBaseSpeed: 0.2,
+                    particleColor: '#d4af37',     // Default Gold
+                    lineColor: 'rgba(214, 175, 55, ', // Alpha appended dynamically
+                };
+
+                // Mouse Tracking Internal State
+                this.mouse = { x: -1000, y: -1000 };
+
+                this.init();
+            }
+
+            /**
+             * Determines the ideal number of particles based on screen real estate
+             * to maintain solid 60fps performance on all devices.
+             */
+            calculateOptimalParticleCount() {
+                const area = window.innerWidth * window.innerHeight;
+                // Roughly 1 particle per 25,000 pixels, maxing out at 100
+                return Math.min(Math.floor(area / 25000), 100);
+            }
+
+            init() {
+                this.resizeCanvas();
+                this.createParticles();
+                this.bindEvents();
+                
+                // Kick off the render loop
+                requestAnimationFrame(() => this.animate());
+            }
+
+            bindEvents() {
+                // Window Resizing Logic
+                window.addEventListener('resize', () => {
+                    this.resizeCanvas();
+                    // Re-calculate counts on resize to adjust to new screen sizes
+                    const newCount = this.calculateOptimalParticleCount();
+                    if (newCount > this.particles.length) {
+                        this.addParticles(newCount - this.particles.length);
+                    } else if (newCount < this.particles.length) {
+                        this.particles.splice(newCount);
+                    }
+                }, { passive: true });
+
+                // Mouse interaction for particle physics repulsion
+                window.addEventListener('pointermove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                }, { passive: true });
+
+                // Handle mouse leaving the window
+                window.addEventListener('pointerout', () => {
+                    this.mouse.x = -1000;
+                    this.mouse.y = -1000;
+                });
+
+                // Listen for theme changes to adjust particle colors
+                window.addEventListener('themeChanged', (e) => this.handleThemeChange(e.detail.theme));
+                
+                // Trigger an initial theme check
+                const initialTheme = document.body.getAttribute('data-theme');
+                if(initialTheme) this.handleThemeChange(initialTheme);
+            }
+
+            handleThemeChange(themeName) {
+                if (themeName === 'light') {
+                    // Darker gold for light mode visibility
+                    this.config.particleColor = '#b89326';
+                    this.config.lineColor = 'rgba(184, 147, 38, ';
+                } else {
+                    // Bright gold for dark mode
+                    this.config.particleColor = '#d4af37';
+                    this.config.lineColor = 'rgba(214, 175, 55, ';
+                }
+            }
+
+            resizeCanvas() {
+                // Use physical device pixels for sharp rendering on retina displays
+                const dpr = window.devicePixelRatio || 1;
+                this.canvas.width = window.innerWidth * dpr;
+                this.canvas.height = window.innerHeight * dpr;
+                
+                // Scale context to match DPR
+                this.ctx.scale(dpr, dpr);
+                
+                // Reset CSS physical dimensions
+                this.canvas.style.width = `${window.innerWidth}px`;
+                this.canvas.style.height = `${window.innerHeight}px`;
+            }
+
+            createParticles() {
+                this.particles = [];
+                this.addParticles(this.config.particleCount);
+            }
+
+            addParticles(count) {
+                for (let i = 0; i < count; i++) {
+                    this.particles.push(new Particle(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight,
+                        this.config.particleBaseSpeed
+                    ));
+                }
+            }
+
+            /**
+             * Core rendering loop. Clears canvas, updates physics, and draws geometry.
+             */
+            animate() {
+                // Clear the previous frame
+                this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+                // Update and draw each particle
+                for (let i = 0; i < this.particles.length; i++) {
+                    const p1 = this.particles[i];
+                    
+                    // Update internal physics (movement, edge collision, mouse repulsion)
+                    p1.update(window.innerWidth, window.innerHeight, this.mouse, this.config.mouseRepelRadius);
+                    
+                    // Draw the particle point
+                    p1.draw(this.ctx, this.config.particleColor);
+
+                    // Calculate networking connections (O(N^2) complexity, hence the strict particle limit)
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const p2 = this.particles[j];
+                        
+                        // Pythagorean theorem for distance
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < this.config.connectionDistance) {
+                            // Calculate opacity based on distance (closer = more opaque)
+                            const opacity = 1 - (distance / this.config.connectionDistance);
+                            
+                            this.ctx.beginPath();
+                            this.ctx.strokeStyle = `${this.config.lineColor}${opacity * 0.5})`; // Max opacity 0.5
+                            this.ctx.lineWidth = 1;
+                            this.ctx.moveTo(p1.x, p1.y);
+                            this.ctx.lineTo(p2.x, p2.y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+
+                // Recursively call next frame
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        /**
+         * Represents a single geometric node in the CanvasParticleEngine.
+         */
+        class Particle {
+            constructor(x, y, baseSpeed) {
+                this.x = x;
+                this.y = y;
+                
+                // Random vector velocities
+                this.vx = (Math.random() - 0.5) * baseSpeed * 2;
+                this.vy = (Math.random() - 0.5) * baseSpeed * 2;
+                
+                // Random radius for slight variation in node size
+                this.radius = Math.random() * 1.5 + 0.5;
+                
+                // Original velocities used for recovering after mouse repulsion
+                this.baseVx = this.vx;
+                this.baseVy = this.vy;
+            }
+
+            /**
+             * Updates particle position, handles screen edge bouncing and mouse repulsion.
+             */
+            update(width, height, mouse, repelRadius) {
+                // Apply velocity vector
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Edge Collision Detection (Bounce logic)
+                if (this.x < 0 || this.x > width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > height) this.vy = -this.vy;
+
+                // Mouse Repulsion Physics Vectoring
+                const dx = this.x - mouse.x;
+                const dy = this.y - mouse.y;
+                const distToMouse = Math.sqrt(dx * dx + dy * dy);
+
+                if (distToMouse < repelRadius) {
+                    // Calculate push force (closer = stronger)
+                    const force = (repelRadius - distToMouse) / repelRadius;
+                    
+                    // Normalize vector direction
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // Apply force vectors to current position
+                    this.x += Math.cos(angle) * force * 3;
+                    this.y += Math.sin(angle) * force * 3;
+                } else {
+                    // Smoothly normalize velocity back to base speeds after being repulsed
+                    this.vx += (this.baseVx - this.vx) * 0.05;
+                    this.vy += (this.baseVy - this.vy) * 0.05;
+                }
+            }
+
+            /**
+             * Renders the particle node onto the canvas context.
+             */
+            draw(ctx, color) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+        }
+
+        /* --------------------------------------------------------------------- */
+        /* MODULE 5: APPLICATION BOOTSTRAPPER                                    */
+        /* --------------------------------------------------------------------- */
+        /**
+         * Wait for the DOM to be fully parsed before initializing the application subsystems.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Remove 'no-js' class to enable JS-specific styles if needed
+            document.documentElement.classList.remove('no-js');
+            document.documentElement.classList.add('js');
+
+            // Initialize all core enterprise subsystems
+            const themeManager = new ThemeManager();
+            const clockSystem = new ClockSystem();
+            const auraTracker = new AuraTracker();
+            const particleEngine = new CanvasParticleEngine();
+
+            // Console Easter Egg for developers inspecting the code
+            console.log(
+                '%c[ Dragontorpedo Enterprise Hub Initialized ]', 
+                'color: #d4af37; font-weight: bold; font-size: 14px; background: #050608; padding: 10px; border-radius: 5px;'
+            );
+            console.log('Core Systems Online: Status Nominal.');
+        });
+        
+    </script>
 </body>
 </html>
