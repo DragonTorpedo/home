@@ -1,1212 +1,683 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Claude · Gemini · ChatGPT — The 3-Engine Playbook</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-  /* ==========================================================================
-     1. CSS DESIGN SYSTEM & VARIABLES
-     ========================================================================== */
-  :root {
-    /* Core Layout & Animation Parameters */
-    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.1);
-    --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
-    --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
-    --transition-fast: 150ms var(--ease-smooth);
-    --transition-base: 250ms var(--ease-smooth);
-    --transition-slow: 400ms var(--ease-smooth);
-    --transition-bounce: 500ms var(--ease-spring);
-    
-    /* Global Base Colors (Deep Modern Dark Theme) */
-    --color-bg-base: #050505;
-    --color-bg-surface: #0a0a0a;
-    --color-bg-elevated: #121212;
-    --color-bg-glass: rgba(20, 20, 20, 0.6);
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #a1a1aa;
-    --color-text-tertiary: #52525b;
-    --color-border-subtle: rgba(255, 255, 255, 0.06);
-    --color-border-hover: rgba(255, 255, 255, 0.15);
-    
-    /* Ambient Glow Base */
-    --glow-opacity: 0.15;
-    --glow-spread: 120px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The 3-Engine Playbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
 
-    /* Claude / Anthropic Theme (Terracotta & Ivory) */
-    --claude-bg-soft: rgba(217, 119, 87, 0.05);
-    --claude-bg-hover: rgba(217, 119, 87, 0.1);
-    --claude-accent: #d97757;
-    --claude-accent-glow: rgba(217, 119, 87, var(--glow-opacity));
-    --claude-text-light: #f4dcc9;
-    --claude-border: rgba(217, 119, 87, 0.2);
-    --claude-border-strong: rgba(217, 119, 87, 0.4);
+  <script>
+    /* Set theme before first paint to avoid a flash of the wrong theme */
+    (function () {
+      var preferred = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', preferred);
+    })();
+  </script>
 
-    /* Gemini / Google Theme (Deep Mind Gradients) */
-    --gemini-bg-soft: rgba(66, 133, 244, 0.05);
-    --gemini-bg-hover: rgba(66, 133, 244, 0.1);
-    --gemini-blue: #4285f4;
-    --gemini-purple: #8b5cf6;
-    --gemini-pink: #d6478c;
-    --gemini-accent-glow: rgba(139, 92, 246, var(--glow-opacity));
-    --gemini-gradient-text: linear-gradient(135deg, var(--gemini-blue) 0%, var(--gemini-purple) 50%, var(--gemini-pink) 100%);
-    --gemini-gradient-bg: linear-gradient(135deg, rgba(66,133,244,0.1) 0%, rgba(139,92,246,0.1) 50%, rgba(214,71,140,0.1) 100%);
-    --gemini-border: rgba(139, 92, 246, 0.2);
-    --gemini-border-strong: rgba(139, 92, 246, 0.4);
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display: 'Sora', system-ui, sans-serif;
+      --font-body:    'Inter', system-ui, sans-serif;
 
-    /* ChatGPT / OpenAI Theme (Emerald & Graphite) */
-    --gpt-bg-soft: rgba(16, 163, 127, 0.05);
-    --gpt-bg-hover: rgba(16, 163, 127, 0.1);
-    --gpt-accent: #10a37f;
-    --gpt-accent-glow: rgba(16, 163, 127, var(--glow-opacity));
-    --gpt-text-light: #3ddca8;
-    --gpt-border: rgba(16, 163, 127, 0.2);
-    --gpt-border-strong: rgba(16, 163, 127, 0.4);
+      /* Gemini sparkle gradient */
+      --g-blue:   #4285F4;
+      --g-purple: #8B5CF6;
+      --g-pink:   #D6478C;
+      --g-gradient: linear-gradient(90deg, var(--g-blue), var(--g-purple), var(--g-pink));
 
-    /* Typography Scales */
-    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-claude-head: 'Poppins', var(--font-sans);
-    --font-claude-body: 'Lora', serif;
-    --font-gemini: 'Sora', var(--font-sans);
-    --font-gpt: 'Space Grotesk', var(--font-sans);
-    --font-mono: 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
-
-    /* Spacing Scales */
-    --space-1: 0.25rem;
-    --space-2: 0.5rem;
-    --space-3: 0.75rem;
-    --space-4: 1rem;
-    --space-6: 1.5rem;
-    --space-8: 2rem;
-    --space-12: 3rem;
-    --space-16: 4rem;
-    --space-24: 6rem;
-    --space-32: 8rem;
-
-    /* Borders & Shadows */
-    --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
-    --radius-xl: 32px;
-    --radius-pill: 9999px;
-    
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
-    --shadow-lg: 0 12px 32px rgba(0,0,0,0.6);
-    --shadow-glow: 0 0 40px rgba(255,255,255,0.03);
-  }
-
-  /* ==========================================================================
-     2. CSS RESET & NORMALIZE
-     ========================================================================== */
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  html {
-    scroll-behavior: smooth;
-    font-size: 16px;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
-    background-color: var(--color-bg-base);
-    color: var(--color-text-primary);
-    font-family: var(--font-sans);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  /* Ambient Grid Background */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: 
-      linear-gradient(to right, var(--color-border-subtle) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--color-border-subtle) 1px, transparent 1px);
-    background-size: 4rem 4rem;
-    mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 80%);
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.4;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-    transition: var(--transition-base);
-  }
-
-  ul, ol {
-    list-style: none;
-  }
-
-  img, svg {
-    display: block;
-    max-width: 100%;
-  }
-
-  ::selection {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-  }
-
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: var(--color-bg-base);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-border-hover);
-    border-radius: var(--radius-pill);
-    border: 2px solid var(--color-bg-base);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-tertiary);
-  }
-
-  /* Accessibility Focus States */
-  :focus-visible {
-    outline: 2px solid var(--color-text-secondary);
-    outline-offset: 4px;
-    border-radius: var(--radius-sm);
-  }
-
-  /* Base Layout Wrappers */
-  .wrap {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-8);
-    position: relative;
-  }
-
-  /* ==========================================================================
-     3. KEYFRAME ANIMATIONS
-     ========================================================================== */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
+      /* light theme (default) */
+      --bg:             #FFFFFF;
+      --bg-raised:      #F8F9FB;
+      --bg-translucent: rgba(255,255,255,0.82);
+      --border:         rgba(15,15,20,0.09);
+      --border-hover:   rgba(66,133,244,0.45);
+      --text-primary:   #1F1F1F;
+      --text-muted:     #5F6368;
+      --accent:         #3367D6;
+      --accent-dim:     rgba(66,133,244,0.09);
+      --glow-opacity:   0.16;
+      --card-shadow:    0 1px 2px rgba(15,15,20,0.05), 0 14px 32px -16px rgba(15,15,20,0.12);
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+
+    html[data-theme="dark"] {
+      --bg:             #131314;
+      --bg-raised:      #1E1F20;
+      --bg-translucent: rgba(19,19,20,0.82);
+      --border:         rgba(255,255,255,0.08);
+      --border-hover:   rgba(138,180,248,0.45);
+      --text-primary:   #E3E3E3;
+      --text-muted:     #9AA0A6;
+      --accent:         #8AB4F8;
+      --accent-dim:     rgba(138,180,248,0.14);
+      --glow-opacity:   0.34;
+      --card-shadow:    0 1px 2px rgba(0,0,0,0.35), 0 14px 32px -16px rgba(0,0,0,0.55);
     }
-  }
 
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-  }
-
-  @keyframes pulseGlow {
-    0% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-    100% { opacity: 0.5; transform: scale(1); }
-  }
-
-  @keyframes gradientPan {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
     }
-    to {
-      opacity: 1;
-      transform: translateX(0);
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+    /* ── LAYOUT ── */
+    .page { display: flex; flex-direction: column; min-height: 100dvh; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-translucent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease);
     }
-  }
-
-  /* ==========================================================================
-     4. HERO SECTION
-     ========================================================================== */
-  .hero {
-    position: relative;
-    padding: var(--space-32) 0 var(--space-16);
-    text-align: center;
-    overflow: hidden;
-    animation: fadeInUp 1s var(--ease-out-quad) forwards;
-  }
-
-  /* Hero Ambient Glows */
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60vw;
-    height: 60vh;
-    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-    filter: blur(80px);
-    z-index: -1;
-    animation: pulseGlow 8s infinite alternate;
-  }
-
-  .eyebrow {
-    display: inline-block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-6);
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-pill);
-    background: var(--color-bg-glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .hero h1 {
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1.1;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin-bottom: var(--space-6);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-3);
-  }
-
-  .hero h1 span {
-    display: inline-block;
-    position: relative;
-  }
-
-  /* Brand Typography Injections */
-  .hero h1 .w-claude {
-    font-family: var(--font-claude-head);
-    color: var(--claude-accent);
-    text-shadow: 0 0 40px var(--claude-accent-glow);
-  }
-
-  .hero h1 .w-gemini {
-    font-family: var(--font-gemini);
-    background: var(--gemini-gradient-text);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gradientPan 6s linear infinite;
-    text-shadow: 0 0 40px var(--gemini-accent-glow);
-  }
-
-  .hero h1 .w-gpt {
-    font-family: var(--font-gpt);
-    color: var(--gpt-accent);
-    text-shadow: 0 0 40px var(--gpt-accent-glow);
-  }
-
-  .hero p {
-    color: var(--color-text-secondary);
-    font-size: clamp(1.1rem, 2vw, 1.3rem);
-    max-width: 640px;
-    margin: 0 auto;
-    line-height: 1.7;
-    font-weight: 400;
-  }
-
-  /* ==========================================================================
-     5. QUICK PICK SECTION
-     ========================================================================== */
-  .pick {
-    position: relative;
-    padding: var(--space-16) 0;
-    background: linear-gradient(to bottom, transparent, var(--color-bg-surface), transparent);
-    border-top: 1px solid var(--color-border-subtle);
-    border-bottom: 1px solid var(--color-border-subtle);
-  }
-
-  .pick h2 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-8);
-    text-align: center;
-  }
-
-  .pick-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
-    opacity: 0;
-    animation: fadeInUp 1s var(--ease-out-quad) 0.3s forwards;
-  }
-
-  .pick-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    background: var(--color-bg-elevated);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-md);
-    padding: var(--space-4) var(--space-6);
-    transition: var(--transition-base);
-    cursor: default;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .pick-row::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-    transform: translateX(-100%);
-    transition: var(--transition-slow);
-  }
-
-  .pick-row:hover {
-    transform: translateY(-4px) scale(1.01);
-    border-color: var(--color-border-hover);
-    box-shadow: var(--shadow-lg);
-    background: #17171a;
-  }
-
-  .pick-row:hover::before {
-    transform: translateX(100%);
-  }
-
-  .pick-row svg {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-    color: var(--color-text-tertiary);
-    transition: var(--transition-base);
-  }
-
-  .pick-row:hover svg {
-    color: var(--color-text-primary);
-    transform: scale(1.1);
-  }
-
-  .pick-row .task {
-    flex: 1;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--color-text-primary);
-    line-height: 1.5;
-  }
-
-  .pick-row .arrow {
-    color: var(--color-text-tertiary);
-    font-size: 1.2rem;
-    transition: var(--transition-bounce);
-  }
-
-  .pick-row:hover .arrow {
-    transform: translateX(6px);
-    color: var(--color-text-primary);
-  }
-
-  /* Engine Pills */
-  .engine-pill {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-pill);
-    white-space: nowrap;
-    border: 1px solid transparent;
-    transition: var(--transition-base);
-  }
-
-  .engine-pill.claude {
-    background: var(--claude-bg-soft);
-    color: var(--claude-accent);
-    border-color: var(--claude-border);
-  }
-  
-  .engine-pill.gemini {
-    background: var(--gemini-bg-soft);
-    color: var(--gemini-blue);
-    border-color: var(--gemini-border);
-  }
-
-  .engine-pill.gpt {
-    background: var(--gpt-bg-soft);
-    color: var(--gpt-accent);
-    border-color: var(--gpt-border);
-  }
-
-  .pick-row:hover .engine-pill.claude { box-shadow: 0 0 15px var(--claude-accent-glow); }
-  .pick-row:hover .engine-pill.gemini { box-shadow: 0 0 15px var(--gemini-accent-glow); }
-  .pick-row:hover .engine-pill.gpt { box-shadow: 0 0 15px var(--gpt-accent-glow); }
-
-  /* ==========================================================================
-     6. ENGINES GRID SECTION
-     ========================================================================== */
-  .engines {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--color-border-subtle);
-    border-bottom: 1px solid var(--color-border-subtle);
-  }
-
-  .engine {
-    background: var(--color-bg-base);
-    padding: var(--space-12) var(--space-8);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    transition: var(--transition-slow);
-    z-index: 1;
-  }
-
-  /* Ambient Hover Effects per column */
-  .engine::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: var(--transition-slow);
-    z-index: -1;
-    pointer-events: none;
-  }
-
-  .engine:hover {
-    background: var(--color-bg-elevated);
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-    z-index: 10;
-  }
-
-  .engine.claude:hover::after {
-    opacity: 1;
-    background: radial-gradient(circle at top right, var(--claude-bg-hover), transparent 70%);
-  }
-  
-  .engine.gemini:hover::after {
-    opacity: 1;
-    background: radial-gradient(circle at top right, var(--gemini-bg-hover), transparent 70%);
-  }
-
-  .engine.gpt:hover::after {
-    opacity: 1;
-    background: radial-gradient(circle at top right, var(--gpt-bg-hover), transparent 70%);
-  }
-
-  /* Engine Headers */
-  .company-tag {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    margin-bottom: var(--space-3);
-    color: var(--color-text-tertiary);
-  }
-
-  .engine-name {
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin-bottom: var(--space-3);
-    line-height: 1;
-  }
-
-  .engine-tagline {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: var(--space-12);
-    color: var(--color-text-secondary);
-  }
-
-  /* Tier List */
-  .tier-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    margin-bottom: var(--space-12);
-  }
-
-  .tier-row {
-    padding: var(--space-3) var(--space-4);
-    border-left: 4px solid;
-    transition: var(--transition-base);
-    background: var(--color-bg-surface);
-  }
-
-  .engine:hover .tier-row {
-    transform: translateX(6px);
-  }
-
-  .tier-row:hover {
-    filter: brightness(1.2);
-  }
-
-  .tier-name {
-    font-weight: 700;
-    font-size: 0.95rem;
-    margin-bottom: var(--space-1);
-    color: var(--color-text-primary);
-  }
-
-  .tier-desc {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: var(--color-text-secondary);
-  }
-
-  /* Engine Specific Customizations */
-  /* Claude Details */
-  .engine.claude .engine-name {
-    font-family: var(--font-claude-head);
-    color: var(--claude-accent);
-  }
-  .engine.claude .engine-tagline {
-    font-family: var(--font-claude-body);
-    font-style: italic;
-    font-size: 1.1rem;
-  }
-  .engine.claude .tier-row {
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    border-left-color: var(--claude-accent);
-    background: linear-gradient(90deg, var(--claude-bg-soft), transparent);
-  }
-  .engine.claude .tier-row:nth-child(2) { border-left-color: rgba(217, 119, 87, 0.6); }
-  .engine.claude .tier-row:nth-child(3) { border-left-color: rgba(217, 119, 87, 0.3); }
-
-  /* Gemini Details */
-  .engine.gemini .engine-name {
-    font-family: var(--font-gemini);
-    background: var(--gemini-gradient-text);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gradientPan 6s linear infinite;
-  }
-  .engine.gemini .tier-row {
-    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-    border-left-color: var(--gemini-blue);
-    background: linear-gradient(90deg, var(--gemini-bg-soft), transparent);
-  }
-  .engine.gemini .tier-row:nth-child(2) { border-left-color: var(--gemini-purple); }
-  .engine.gemini .tier-row:nth-child(3) { border-left-color: var(--gemini-pink); }
-
-  /* ChatGPT Details */
-  .engine.gpt .engine-name {
-    font-family: var(--font-gpt);
-    color: var(--gpt-accent);
-  }
-  .engine.gpt .tier-row {
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    border-left-color: var(--gpt-accent);
-    background: linear-gradient(90deg, var(--gpt-bg-soft), transparent);
-  }
-  .engine.gpt .tier-row:nth-child(2) { border-left-color: rgba(16, 163, 127, 0.6); }
-  .engine.gpt .tier-row:nth-child(3) { border-left-color: rgba(16, 163, 127, 0.3); }
-
-  /* Feature Lists ("Do this") */
-  .block-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-4);
-  }
-
-  .do-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    margin-bottom: var(--space-12);
-  }
-
-  .do-list li {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    padding-left: var(--space-6);
-    position: relative;
-    color: var(--color-text-primary);
-  }
-
-  .do-list li::before {
-    content: "→";
-    position: absolute;
-    left: 0;
-    color: var(--color-text-tertiary);
-    transition: var(--transition-bounce);
-  }
-
-  .do-list li:hover::before {
-    transform: translateX(4px);
-    color: var(--color-text-primary);
-  }
-
-  .do-list code {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    padding: 0.15em 0.4em;
-    border-radius: var(--radius-sm);
-    font-weight: 500;
-  }
-
-  /* Code highlights per engine */
-  .engine.claude .do-list code { background: var(--claude-bg-hover); color: var(--claude-text-light); }
-  .engine.gemini .do-list code { background: var(--gemini-bg-hover); color: #a78bfa; }
-  .engine.gpt .do-list code { background: var(--gpt-bg-hover); color: var(--gpt-text-light); }
-
-  /* Bottom Callouts */
-  .callout {
-    margin-top: auto;
-    padding: var(--space-6);
-    font-size: 0.85rem;
-    line-height: 1.7;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .callout code {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    margin: var(--space-3) 0;
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    overflow-x: auto;
-    white-space: pre;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-  }
-
-  /* Engine Specific Callouts */
-  .engine.claude .callout {
-    background: var(--claude-bg-soft);
-    border: 1px solid var(--claude-border);
-    border-radius: var(--radius-md);
-    color: var(--claude-text-light);
-  }
-  .engine.claude .callout code {
-    background: #11100e;
-    color: var(--claude-accent);
-    border: 1px solid var(--claude-border-strong);
-  }
-
-  .engine.gemini .callout {
-    background: var(--gemini-bg-soft);
-    border: 1px solid var(--gemini-border);
-    border-radius: var(--radius-lg);
-    color: #e2e8f0;
-  }
-  
-  .engine.gpt .callout {
-    background: var(--gpt-bg-soft);
-    border: 1px solid var(--gpt-border);
-    border-radius: var(--radius-sm);
-    color: var(--gpt-text-light);
-  }
-
-  /* ==========================================================================
-     7. WORKFLOWS SECTION
-     ========================================================================== */
-  .workflows {
-    padding: var(--space-24) 0;
-    background: var(--color-bg-base);
-    position: relative;
-  }
-
-  .workflows::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-border-hover), transparent);
-  }
-
-  .workflows .head {
-    text-align: center;
-    margin-bottom: var(--space-12);
-  }
-
-  .workflows h2 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
-  }
-
-  .workflows .head p {
-    color: var(--color-text-secondary);
-    font-size: 1.1rem;
-    margin-top: var(--space-2);
-  }
-
-  .flow-card {
-    background: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-xl);
-    padding: var(--space-8);
-    margin-bottom: var(--space-6);
-    box-shadow: var(--shadow-md);
-    transition: var(--transition-base);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .flow-card:hover {
-    border-color: var(--color-border-hover);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-  }
-
-  .flow-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(to bottom, var(--gemini-blue), var(--claude-accent));
-    opacity: 0.5;
-  }
-
-  .flow-card:last-child::before {
-    background: linear-gradient(to bottom, var(--color-text-tertiary), var(--gpt-accent));
-  }
-
-  .flow-card h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: var(--space-6);
-    color: var(--color-text-primary);
-  }
-
-  .flow-row {
-    display: flex;
-    align-items: stretch;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-  }
-
-  .flow-step {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: var(--space-1);
-    padding: var(--space-4) var(--space-6);
-    border-radius: var(--radius-md);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    min-width: 200px;
-    flex: 1;
-    position: relative;
-    border: 1px solid transparent;
-    transition: var(--transition-base);
-  }
-
-  .flow-step:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .flow-step b {
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  /* Step Themes */
-  .flow-step.claude {
-    background: var(--claude-bg-soft);
-    border-color: var(--claude-border);
-    color: var(--claude-text-light);
-  }
-  
-  .flow-step.gemini {
-    background: var(--gemini-bg-soft);
-    border-color: var(--gemini-border);
-    color: #93c5fd;
-  }
-  
-  .flow-step.gpt {
-    background: var(--gpt-bg-soft);
-    border-color: var(--gpt-border);
-    color: var(--gpt-text-light);
-  }
-  
-  .flow-step.neutral {
-    background: var(--color-bg-elevated);
-    border-color: var(--color-border-subtle);
-    color: var(--color-text-secondary);
-  }
-
-  .flow-arrow {
-    display: flex;
-    align-items: center;
-    color: var(--color-text-tertiary);
-    font-size: 1.5rem;
-    flex-shrink: 0;
-    animation: slideInRight 2s infinite alternate var(--ease-in-out-circ);
-  }
-
-  .flow-caption {
-    margin-top: var(--space-6);
-    font-size: 0.95rem;
-    color: var(--color-text-secondary);
-    font-style: italic;
-    border-top: 1px dashed var(--color-border-subtle);
-    padding-top: var(--space-4);
-  }
-
-  /* ==========================================================================
-     8. FOOTER SECTION
-     ========================================================================== */
-  .stripe {
-    height: 4px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    width: 100%;
-  }
-
-  .stripe div:nth-child(1) { background: var(--claude-accent); }
-  .stripe div:nth-child(2) { background: var(--gemini-gradient-bg); }
-  .stripe div:nth-child(3) { background: var(--gpt-accent); }
-
-  footer {
-    padding: var(--space-12) 0 var(--space-16);
-    text-align: center;
-    background: var(--color-bg-surface);
-  }
-
-  footer p {
-    font-size: 1rem;
-    color: var(--color-text-primary);
-    margin-bottom: var(--space-2);
-    font-weight: 500;
-  }
-
-  footer .meta {
-    font-size: 0.85rem;
-    color: var(--color-text-tertiary);
-    font-weight: 400;
-  }
-
-  /* ==========================================================================
-     9. RESPONSIVE MEDIA QUERIES
-     ========================================================================== */
-  
-  /* Large Tablets / Small Desktops */
-  @media (max-width: 1024px) {
-    .engines {
-      grid-template-columns: repeat(2, 1fr);
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      background: var(--g-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .engine:last-child {
-      grid-column: span 2;
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
     }
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 4rem);
-    }
-  }
+    .nav-links a:hover { color: var(--text-primary); }
 
-  /* Tablets */
-  @media (max-width: 768px) {
-    .pick-grid {
-      grid-template-columns: 1fr;
-    }
-    .engines {
-      grid-template-columns: 1fr;
-    }
-    .engine:last-child {
-      grid-column: span 1;
-    }
-    .engine {
-      padding: var(--space-8) var(--space-6);
-    }
-    .flow-row {
-      flex-direction: column;
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-raised);
+      color: var(--text-primary);
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background-color 0.3s var(--ease), color 0.3s var(--ease);
     }
-    .flow-step {
-      width: 100%;
+    .theme-toggle:hover { border-color: var(--border-hover); }
+    .theme-toggle svg { width: 18px; height: 18px; display: none; }
+    html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+    html[data-theme="dark"]  .theme-toggle .icon-sun  { display: block; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      isolation: isolate;
+      padding: 16rem 2.5rem 8rem;
+      max-width: 900px;
+      margin: 0 auto;
       text-align: center;
     }
-    .flow-arrow {
-      transform: rotate(90deg);
-      margin: var(--space-2) 0;
-      animation: float 2s infinite alternate var(--ease-in-out-circ);
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(70px);
+      opacity: var(--glow-opacity);
+      background:
+        radial-gradient(circle at 18% 30%, var(--g-blue), transparent 55%),
+        radial-gradient(circle at 82% 18%, var(--g-purple), transparent 55%),
+        radial-gradient(circle at 50% 92%, var(--g-pink), transparent 55%);
+      transition: opacity 0.4s var(--ease);
     }
-  }
-
-  /* Mobile */
-  @media (max-width: 480px) {
-    .wrap {
-      padding: 0 var(--space-4);
-    }
-    .hero {
-      padding: var(--space-16) 0 var(--space-8);
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
     }
     .hero h1 {
-      flex-direction: column;
-      gap: 0;
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.8rem;
     }
-    .pick {
-      padding: var(--space-8) 0;
+    .hero h1 em {
+      font-style: italic;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 0.5rem;
     }
-    .pick-row {
-      padding: var(--space-3) var(--space-4);
+    .hero-sub {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 3rem;
     }
-    .engine-name {
-      font-size: 2.2rem;
+    .divider {
+      width: 56px; height: 3px;
+      border-radius: 999px;
+      background: var(--g-gradient);
+      margin: 0 auto;
+      opacity: 0.9;
     }
-    .workflows {
-      padding: var(--space-12) 0;
-    }
-    .flow-card {
-      padding: var(--space-6) var(--space-4);
-    }
-  }
 
-  /* Accessibility: Prefers Reduced Motion */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+    /* ── SECTION WRAPPER ── */
+    .section {
+      padding: 6rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
     }
-    .hero::before,
-    .hero h1 .w-gemini,
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 3rem;
+    }
+
+    /* ── MODEL CARDS (ENGINES) ── */
+    .models {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+      background: var(--border); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+    .model-card {
+      position: relative;
+      background: var(--bg);
+      padding: 2.5rem 2rem;
+      transition: background-color 0.3s var(--ease);
+      display: flex;
+      flex-direction: column;
+    }
+    .model-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--g-gradient);
+      opacity: 0.85;
+    }
+    .model-card:hover { background: var(--bg-raised); }
+    .model-tag {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+    .model-name {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .model-desc {
+      font-size: 0.8rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+    }
+    .model-specs { list-style: none; margin-bottom: 1.8rem; }
+    .model-specs li {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0.55rem 0;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      letter-spacing: 0.03em;
+    }
+    .model-specs li span {
+      color: var(--text-primary);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+
+    /* Content specific formatting */
+    .block-title {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+    .do-list {
+      list-style: none;
+      margin-bottom: 1.8rem;
+    }
+    .do-list li {
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      padding-left: 1.2rem;
+      position: relative;
+    }
+    .do-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .do-list code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    .callout {
+      margin-top: auto;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      font-size: 0.76rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+    .callout code {
+      display: block;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      margin: 0.5rem 0;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+
+    /* ── TIPS & WORKFLOW CARDS ── */
+    .tips {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 1px;
+      background: var(--border); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+    .tip-card {
+      background: var(--bg);
+      padding: 2rem;
+      transition: background-color 0.3s var(--ease);
+    }
+    .tip-card:hover { background: var(--bg-raised); }
+    .tip-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .tip-body {
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+    .tip-body code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    .engine-pill {
+      display: inline-block;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border: 1px solid var(--accent);
+      background: var(--accent-dim);
+      border-radius: 999px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 0.5rem;
+      margin-right: 0.5rem;
+    }
+
+    /* Workflows Specific */
+    .flow-row { margin-top: 1.2rem; }
+    .flow-step {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .flow-step b {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+    .flow-step p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
     .flow-arrow {
-      animation: none !important;
+      text-align: center;
+      color: var(--accent);
+      margin: 0.5rem 0;
+      font-size: 1.2rem;
     }
-  }
-</style>
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: auto;
+      padding: 3rem 2.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .footer-left {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-style: italic;
+    }
+    .footer-right {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .models { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 820px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .hero { padding: 10rem 1.5rem 5rem; }
+      .section { padding: 4rem 1.5rem; }
+      .tips { grid-template-columns: 1fr; }
+      footer { flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 2rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 2.4rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="wrap">
-    <p class="eyebrow">The 3-Engine Playbook</p>
-    <h1><span class="w-claude">Claude.</span> <span class="w-gemini">Gemini.</span> <span class="w-gpt">ChatGPT.</span></h1>
-    <p>Three different engines built for three different jobs. Match the task — stop guessing.</p>
-  </div>
-</header>
+<div class="page">
 
-<section class="pick">
-  <div class="wrap">
-    <h2>Open the right one</h2>
-    <div class="pick-grid">
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Playbook</div>
+    <div class="nav-links">
+      <a href="#pick">Quick Pick</a>
+      <a href="#engines">Engines</a>
+      <a href="#workflows">Workflows</a>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </nav>
 
-      <div class="pick-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="7" x2="16" y2="7"></line><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="17" x2="13" y2="17"></line></svg>
-        <span class="task">Huge document or research dump</span>
-        <span class="arrow">→</span>
-        <span class="engine-pill gemini">Gemini</span>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <p class="hero-eyebrow">The 3-Engine Playbook</p>
+    <h1>Claude.<br>Gemini.<br>ChatGPT.</h1>
+    <p class="hero-sub">Three different engines built for three different jobs. Match the task — stop guessing.</p>
+    <div class="divider"></div>
+  </header>
+
+  <!-- QUICK PICK -->
+  <section class="section" id="pick">
+    <p class="section-label">Open the right one</p>
+    <div class="tips">
+
+      <div class="tip-card">
+        <h3 class="tip-title">Huge document or research dump</h3>
+        <p class="tip-body">Feed it everything. It won't lose the thread.</p>
+        <span class="engine-pill">→ Gemini</span>
       </div>
 
-      <div class="pick-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 4 12 9 6"></polyline><polyline points="15 6 20 12 15 18"></polyline></svg>
-        <span class="task">Production code, refactors, long agent runs</span>
-        <span class="arrow">→</span>
-        <span class="engine-pill claude">Claude</span>
+      <div class="tip-card">
+        <h3 class="tip-title">Production code & long agent runs</h3>
+        <p class="tip-body">Give it the hard, messy problem and walk away.</p>
+        <span class="engine-pill">→ Claude</span>
       </div>
 
-      <div class="pick-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-        <span class="task">Fast back-and-forth, steer it mid-task</span>
-        <span class="arrow">→</span>
-        <span class="engine-pill gpt">ChatGPT</span>
+      <div class="tip-card">
+        <h3 class="tip-title">Fast back-and-forth iteration</h3>
+        <p class="tip-body">Steer it mid-task without restarting the prompt.</p>
+        <span class="engine-pill">→ ChatGPT</span>
       </div>
 
-      <div class="pick-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-        <span class="task">Reading video, audio, or images</span>
-        <span class="arrow">→</span>
-        <span class="engine-pill gemini">Gemini</span>
+      <div class="tip-card">
+        <h3 class="tip-title">Reading video, audio, or images</h3>
+        <p class="tip-body">Natively built for heavy multimodal extraction.</p>
+        <span class="engine-pill">→ Gemini</span>
       </div>
 
-      <div class="pick-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
-        <span class="task">Writing that needs real nuance</span>
-        <span class="arrow">→</span>
-        <span class="engine-pill claude">Claude</span>
+      <div class="tip-card">
+        <h3 class="tip-title">Writing that needs real nuance</h3>
+        <p class="tip-body">The best at avoiding robotic AI jargon.</p>
+        <span class="engine-pill">→ Claude</span>
       </div>
 
-      <div class="pick-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"></path></svg>
-        <span class="task">Quick draft, brainstorm, simple chat</span>
-        <span class="arrow">→</span>
-        <span class="engine-pill gpt">ChatGPT</span>
+      <div class="tip-card">
+        <h3 class="tip-title">Quick draft or simple chat</h3>
+        <p class="tip-body">Your fastest default for brainstorming.</p>
+        <span class="engine-pill">→ ChatGPT</span>
       </div>
 
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="engines">
+  <!-- ENGINES -->
+  <section class="section" id="engines" style="padding-top:0;">
+    <p class="section-label">The Engines</p>
+    <div class="models">
 
-  <div class="engine claude">
-    <div>
-      <p class="company-tag">Anthropic</p>
-      <h2 class="engine-name">Claude</h2>
-      <p class="engine-tagline">The senior engineer. Give it the hard, messy problem.</p>
+      <!-- CLAUDE -->
+      <div class="model-card">
+        <p class="model-tag">Anthropic</p>
+        <h2 class="model-name">Claude</h2>
+        <p class="model-desc">The senior engineer. Give it the hard, messy problem.</p>
+        
+        <ul class="model-specs">
+          <li>Opus 4.7 <span>Big refactors & agents</span></li>
+          <li>Sonnet 4.6 <span>Daily driver & review</span></li>
+          <li>Haiku 4.5 <span>Bulk classification speed</span></li>
+        </ul>
 
-      <div class="tier-list">
-        <div class="tier-row"><div class="tier-name">Opus 4.7</div><div class="tier-desc">Hardest jobs — big refactors, architecture, long agent runs.</div></div>
-        <div class="tier-row"><div class="tier-name">Sonnet 4.6</div><div class="tier-desc">Daily driver. Code review, writing, most tasks.</div></div>
-        <div class="tier-row"><div class="tier-name">Haiku 4.5</div><div class="tier-desc">Bulk speed. Classification, simple API calls.</div></div>
+        <p class="block-title">Do this</p>
+        <ul class="do-list">
+          <li>Wrap inputs in <code>&lt;context&gt;</code> / <code>&lt;instructions&gt;</code> tags. Ask for <code>&lt;answer&gt;</code> back.</li>
+          <li>Say what to <strong>do</strong>, not what to avoid.</li>
+          <li>Hard problem? Just say "think thoroughly" — don't script the steps.</li>
+          <li>Give it a role and an output format in the same prompt.</li>
+        </ul>
+
+        <div class="callout">
+          Free local coding — route Claude Code through Ollama:
+          <code>claude --model qwen3-coder</code>
+          Set context to 64k+ first or long files get cut off. Recurring task? Save it once in <code>.claude/skills/</code> — pulled in only when needed.
+        </div>
       </div>
 
-      <p class="block-title">Do this</p>
-      <ul class="do-list">
-        <li>Wrap inputs in <code>&lt;context&gt;</code> / <code>&lt;instructions&gt;</code> tags. Ask for <code>&lt;answer&gt;</code> back.</li>
-        <li>Say what to <strong>do</strong>, not what to avoid.</li>
-        <li>Hard problem? Just say "think thoroughly" — don't script the steps.</li>
-        <li>Give it a role and an output format in the same prompt.</li>
-      </ul>
-    </div>
+      <!-- GEMINI -->
+      <div class="model-card">
+        <p class="model-tag">Google</p>
+        <h2 class="model-name">Gemini</h2>
+        <p class="model-desc">The researcher. Feed it everything — it won't lose the thread.</p>
+        
+        <ul class="model-specs">
+          <li>3.1 Pro <span>Judgment & ambiguous logic</span></li>
+          <li>3.5 Flash <span>Fastest daily extraction</span></li>
+          <li>3.1 Flash-Lite <span>High-volume routing</span></li>
+        </ul>
 
-    <div class="callout">
-      Free local coding — route Claude Code through Ollama:
-      <code>claude --model qwen3-coder</code>
-      Set context to 64k+ first or long files get cut off. Recurring task? Save it once in <code>.claude/skills/</code> — pulled in only when needed.
-    </div>
-  </div>
+        <p class="block-title">Do this</p>
+        <ul class="do-list">
+          <li>Loading a big document? Put instructions at the <strong>bottom</strong>, after the content.</li>
+          <li>Skip the copy-paste — <code>@Drive</code> / <code>@Gmail</code> pull files straight in.</li>
+          <li>Treat video and audio like text. Just upload and ask.</li>
+          <li>Say "keep the output concise" or it over-explains.</li>
+        </ul>
 
-  <div class="engine gemini">
-    <div>
-      <p class="company-tag">Google</p>
-      <h2 class="engine-name">Gemini</h2>
-      <p class="engine-tagline">The researcher. Feed it everything — it won't lose the thread.</p>
-
-      <div class="tier-list">
-        <div class="tier-row"><div class="tier-name">3.1 Pro</div><div class="tier-desc">Hardest reasoning. Ambiguous tasks, judgment calls on images & video.</div></div>
-        <div class="tier-row"><div class="tier-name">3.5 Flash</div><div class="tier-desc">Daily driver. Near-Pro smarts, fastest, the default pick.</div></div>
-        <div class="tier-row"><div class="tier-name">3.1 Flash-Lite</div><div class="tier-desc">Bulk extraction, routing, high-volume classification.</div></div>
+        <div class="callout">
+          The 1M-token window holds up under real load — load the whole repo, not snippets. That's the actual edge over the other two.
+        </div>
       </div>
 
-      <p class="block-title">Do this</p>
-      <ul class="do-list">
-        <li>Loading a big document? Put instructions at the <strong>bottom</strong>, after the content.</li>
-        <li>Skip the copy-paste — <code>@Drive</code> / <code>@Gmail</code> pull files straight in.</li>
-        <li>Treat video and audio like text. Just upload and ask.</li>
-        <li>Say "keep the output concise" or it over-explains.</li>
-      </ul>
-    </div>
+      <!-- CHATGPT -->
+      <div class="model-card">
+        <p class="model-tag">OpenAI</p>
+        <h2 class="model-name">ChatGPT</h2>
+        <p class="model-desc">The fast iterator. Steer it instead of restarting it.</p>
+        
+        <ul class="model-specs">
+          <li>GPT-5.5 Pro <span>Hardest, high-stakes work</span></li>
+          <li>GPT-5.5 Thinking <span>Coding & deep research</span></li>
+          <li>GPT-5.5 Instant <span>Fast default chat</span></li>
+        </ul>
 
-    <div class="callout">
-      The 1M-token window holds up under real load — load the whole repo, not snippets. That's the actual edge over the other two.
-    </div>
-  </div>
+        <p class="block-title">Do this</p>
+        <ul class="do-list">
+          <li>Coding agent is <strong>Codex</strong> — message it mid-run to redirect, no restart needed.</li>
+          <li>Recurring job? Use Scheduled Tasks instead of re-prompting every time.</li>
+          <li>Write prompts like you'd talk — it rewards natural phrasing over rigid templates.</li>
+          <li>Lock in repeat context with a Project. Stop re-pasting the same brief.</li>
+        </ul>
 
-  <div class="engine gpt">
-    <div>
-      <p class="company-tag">OpenAI</p>
-      <h2 class="engine-name">ChatGPT</h2>
-      <p class="engine-tagline">The fast iterator. Steer it instead of restarting it.</p>
-
-      <div class="tier-list">
-        <div class="tier-row"><div class="tier-name">GPT-5.5 Pro</div><div class="tier-desc">Most thorough. Hardest, highest-stakes work.</div></div>
-        <div class="tier-row"><div class="tier-name">GPT-5.5 Thinking</div><div class="tier-desc">Daily driver. Coding, research, real documents.</div></div>
-        <div class="tier-row"><div class="tier-name">GPT-5.5 Instant</div><div class="tier-desc">Fast default. Quick chat, simple tasks.</div></div>
+        <div class="callout">
+          Default model is Instant — switch to Thinking yourself for anything that actually matters.
+        </div>
       </div>
 
-      <p class="block-title">Do this</p>
-      <ul class="do-list">
-        <li>Coding agent is <strong>Codex</strong> — message it mid-run to redirect, no restart needed.</li>
-        <li>Recurring job? Use Scheduled Tasks instead of re-prompting every time.</li>
-        <li>Write prompts like you'd talk — it rewards natural phrasing over rigid templates.</li>
-        <li>Lock in repeat context with a Project. Stop re-pasting the same brief.</li>
-      </ul>
     </div>
+  </section>
 
-    <div class="callout">
-      Default model is Instant — switch to Thinking yourself for anything that actually matters.
-    </div>
-  </div>
+  <!-- WORKFLOWS -->
+  <section class="section" id="workflows" style="padding-top:0;">
+    <p class="section-label">Chain Them Together</p>
+    <p class="hero-sub" style="margin: 0 0 2rem 0; text-align: left;">The real unlock isn't picking one. It's handing off between them.</p>
+    
+    <div class="tips">
 
-</section>
-
-<section class="workflows">
-  <div class="wrap">
-    <div class="head">
-      <h2>Chain Them Together</h2>
-      <p>The real unlock isn't picking one. It's handing off between them.</p>
-    </div>
-
-    <div class="flow-card">
-      <h3>Design → Build</h3>
-      <div class="flow-row">
-        <div class="flow-step gemini"><b>Gemini</b>Sketch the UI. Fast, cheap, good enough to throw away.</div>
-        <span class="flow-arrow">→</span>
-        <div class="flow-step claude"><b>Claude</b>Wire up the logic. Debug it. Make it hold under real use.</div>
+      <div class="tip-card">
+        <h3 class="tip-title">Design → Build</h3>
+        <p class="tip-body">Let Gemini throw shapes at the wall. Let Claude make them work.</p>
+        
+        <div class="flow-row">
+          <div class="flow-step">
+            <b>Gemini</b>
+            <p>Sketch the UI. Fast, cheap, good enough to throw away.</p>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <b>Claude</b>
+            <p>Wire up the logic. Debug it. Make it hold under real use.</p>
+          </div>
+        </div>
       </div>
-      <p class="flow-caption">Let Gemini throw shapes at the wall. Let Claude make them work.</p>
-    </div>
 
-    <div class="flow-card">
-      <h3>Facts → Output</h3>
-      <div class="flow-row">
-        <div class="flow-step neutral"><b>Messy docs</b>Contracts, fee sheets, training material.</div>
-        <span class="flow-arrow">→</span>
-        <div class="flow-step gemini"><b>NotebookLM</b>Locks the facts. No hallucination, no drifting source.</div>
-        <span class="flow-arrow">→</span>
-        <div class="flow-step claude"><b>Claude + Skill</b>Applies your format template.</div>
-        <span class="flow-arrow">→</span>
-        <div class="flow-step neutral"><b>Deliverable</b>Ready to send, unattended.</div>
+      <div class="tip-card">
+        <h3 class="tip-title">Facts → Output</h3>
+        <p class="tip-body">Ground the facts before you generate anything — hallucination-proof by construction.</p>
+        
+        <div class="flow-row">
+          <div class="flow-step">
+            <b>Messy docs</b>
+            <p>Contracts, fee sheets, training material.</p>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <b>NotebookLM</b>
+            <p>Locks the facts. No hallucination, no drifting source.</p>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <b>Claude + Skill</b>
+            <p>Applies your format template. Deliverable is ready to send.</p>
+          </div>
+        </div>
       </div>
-      <p class="flow-caption">Ground the facts before you generate anything — hallucination-proof by construction.</p>
-    </div>
-  </div>
-</section>
 
-<div class="stripe"><div></div><div></div><div></div></div>
-<footer>
-  <p>Pick the engine for the job. Not out of habit.</p>
-  <p class="meta">Model names current as of June 2026 — all three move fast. Check before you build on a version number.</p>
-</footer>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-left">Pick the engine for the job. Not out of habit.</p>
+    <p class="footer-right">Model names current as of June 2026.</p>
+  </footer>
+
+</div><!-- /.page -->
+
+<script>
+'use strict';
+
+/* ── THEME TOGGLE ── */
+(function () {
+  const root = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    root.style.colorScheme = theme;
+    toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+
+  // Sync the colorScheme style with whatever the early head script picked
+  applyTheme(root.getAttribute('data-theme') || 'light');
+
+  toggle.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  });
+})();
+</script>
 
 </body>
 </html>
