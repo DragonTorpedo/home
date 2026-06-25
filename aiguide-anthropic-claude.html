@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude — 2026 Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg:           #111110;
+      --bg-raised:    #181817;
+      --border:       rgba(255,255,255,0.07);
+      --border-hover: rgba(201,168,76,0.38);
+      --text-primary: #F2EFE8;
+      --text-muted:   #7A7872;
+      --gold:         #C9A84C;
+      --gold-dim:     rgba(201,168,76,0.13);
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+      --ease:         cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 16rem 2.5rem 8rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .eyebrow {
+      font-size: 0.66rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.8rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--text-muted); }
+    .hero-sub {
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: var(--text-muted);
+      max-width: 500px;
+      margin: 0 auto 3rem;
+    }
+    .divider {
+      width: 48px; height: 1px;
+      background: var(--gold);
+      margin: 0 auto;
+      opacity: 0.55;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      padding: 6rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .section + .section { padding-top: 0; }
+    .section-label {
+      font-size: 0.63rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 3rem;
+    }
+
+    /* ── MODEL CARDS ── */
+    .models {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .model-card {
+      background: var(--bg);
+      padding: 2.5rem 2rem;
+      transition: background 0.3s var(--ease);
+    }
+    .model-card:hover { background: var(--bg-raised); }
+    .model-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+    .model-name {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 0.9rem;
+    }
+    .model-desc {
+      font-size: 0.79rem;
+      line-height: 1.78;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+    }
+    .model-specs { list-style: none; }
+    .model-specs li {
+      font-size: 0.71rem;
+      color: var(--text-muted);
+      padding: 0.55rem 0;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .model-specs li span { color: var(--text-primary); font-size: 0.69rem; letter-spacing: 0.04em; }
+
+    /* ── RULES (signature element) ── */
+    .rules { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .rule-row {
+      background: var(--bg);
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 0;
+      transition: background 0.3s var(--ease);
+    }
+    .rule-row:hover { background: var(--bg-raised); }
+    .rule-label {
+      padding: 2.2rem 2rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+    }
+    .rule-label-inner {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1;
+      opacity: 0.35;
+    }
+    .rule-body { padding: 2.2rem 2rem; }
+    .rule-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 300;
+      margin-bottom: 0.65rem;
+      line-height: 1.3;
+    }
+    .rule-text {
+      font-size: 0.79rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .rule-text:last-child { margin-bottom: 0; }
+    .rule-example {
+      font-size: 0.73rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      background: var(--bg-raised);
+      border-left: 2px solid var(--gold);
+      padding: 0.8rem 1rem;
+      margin-top: 0.8rem;
+    }
+    .rule-example strong { color: var(--text-primary); font-weight: 400; display: block; margin-bottom: 0.3rem; font-size: 0.67rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* ── WORKFLOWS ── */
+    .workflows {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .workflow-card {
+      background: var(--bg);
+      padding: 2rem;
+      transition: background 0.3s var(--ease);
+    }
+    .workflow-card:hover { background: var(--bg-raised); }
+    .workflow-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 300;
+      margin-bottom: 0.75rem;
+    }
+    .workflow-text {
+      font-size: 0.77rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .workflow-prompt {
+      font-size: 0.72rem;
+      line-height: 1.72;
+      color: var(--text-muted);
+      background: var(--bg-raised);
+      border-left: 2px solid var(--gold);
+      padding: 0.75rem 0.9rem;
+      font-style: italic;
+    }
+
+    /* ── EFFORT TABLE ── */
+    .effort-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .effort-card {
+      background: var(--bg);
+      padding: 2.5rem 2rem;
+      transition: background 0.3s var(--ease);
+    }
+    .effort-card:hover { background: var(--bg-raised); }
+    .effort-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.1rem;
+    }
+    .effort-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 300;
+      margin-bottom: 0.8rem;
+    }
+    .effort-text {
+      font-size: 0.79rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+    .effort-uses { list-style: none; margin-top: 1.2rem; }
+    .effort-uses li {
+      font-size: 0.71rem;
+      color: var(--text-muted);
+      padding: 0.5rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── SURVEY ── */
+    .survey-wrap {
+      border: 1px solid var(--border);
+      background: var(--bg-raised);
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .survey-header {
+      padding: 2.5rem 2.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .survey-header h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 300;
+      margin-bottom: 0.4rem;
+    }
+    .survey-header p { font-size: 0.79rem; color: var(--text-muted); line-height: 1.7; }
+
+    .survey-progress-bar { height: 1px; background: var(--border); }
+    .survey-progress-fill { height: 100%; background: var(--gold); transition: width 0.5s var(--ease); }
+
+    .survey-steps { padding: 2.5rem; }
+    .step { display: none; }
+    .step.active { display: block; animation: fadeUp 0.35s var(--ease); }
+
+    .step-num {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.4rem;
+    }
+    .step h3 {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 300;
+      line-height: 1.35;
+      margin-bottom: 2rem;
+    }
+    .step-options { display: grid; gap: 0.55rem; }
+    .opt-btn {
+      width: 100%;
+      text-align: left;
+      padding: 1rem 1.2rem;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-muted);
+      font-size: 0.79rem;
+      line-height: 1.55;
+      border-radius: 2px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .opt-btn:hover { border-color: var(--border-hover); color: var(--text-primary); background: var(--bg); }
+    .opt-btn.selected { border-color: var(--gold); color: var(--text-primary); background: var(--gold-dim); }
+
+    .survey-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2.5rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .btn-ghost {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--text-primary); }
+    .btn-ghost:disabled { opacity: 0.2; pointer-events: none; }
+    .btn-primary {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--gold);
+      padding: 0.7rem 1.8rem;
+      border-radius: 1px;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.82; }
+    .btn-primary:disabled { opacity: 0.3; pointer-events: none; }
+
+    /* ── RESULT ── */
+    .result-wrap {
+      display: none;
+      padding: 2.5rem;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.6s var(--ease) forwards;
+    }
+    .result-wrap.visible { display: block; }
+    .result-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .result-model {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .result-sub {
+      font-size: 0.72rem;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .result-divider { width: 40px; height: 1px; background: var(--gold); opacity: 0.55; margin-bottom: 1.2rem; }
+    .result-reason { font-size: 0.81rem; line-height: 1.82; color: var(--text-muted); margin-bottom: 1.4rem; }
+    .result-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.8rem; }
+    .result-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      padding: 0.22rem 0.65rem;
+      border-radius: 2px;
+      color: var(--text-muted);
+    }
+    .result-tip {
+      font-size: 0.77rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-left: 2px solid var(--gold);
+      padding: 0.85rem 1rem;
+    }
+    .result-tip strong { color: var(--text-primary); font-weight: 400; }
+    .btn-retry {
+      display: inline-block;
+      margin-top: 1.8rem;
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-retry:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 6rem;
+      padding: 3rem 2.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .footer-left {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .footer-right {
+      font-size: 0.63rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── ANIM ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .hero { padding: 10rem 1.5rem 5rem; }
+      .section { padding: 4rem 1.5rem; }
+      .models { grid-template-columns: 1fr; }
+      .workflows { grid-template-columns: 1fr; }
+      .effort-grid { grid-template-columns: 1fr; }
+      .rule-row { grid-template-columns: 80px 1fr; }
+      .rule-label-inner { font-size: 2rem; }
+      .survey-header, .survey-steps { padding: 2rem 1.5rem; }
+      .survey-header { padding-bottom: 1.8rem; }
+      .survey-nav { padding: 1.4rem 1.5rem 1.8rem; }
+      .result-wrap { padding: 2rem 1.5rem; }
+      footer { flex-direction: column; align-items: flex-start; padding: 2rem 1.5rem; }
+    }
+    @media (max-width: 520px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 2.5rem; }
+      .rule-label { display: none; }
+      .rule-row { grid-template-columns: 1fr; }
+      .result-model { font-size: 2.2rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Claude</div>
+    <div class="nav-links">
+      <a href="#models">Models</a>
+      <a href="#rules">Prompting</a>
+      <a href="#workflows">Workflows</a>
+      <a href="#survey">Find Yours</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <p class="eyebrow">2026 Field Guide</p>
+    <h1>Better prompts.<br><em>Sharper results.</em></h1>
+    <p class="hero-sub">Three models. Four golden rules. The complete guide to getting the most out of Claude — without wasting a single token.</p>
+    <div class="divider"></div>
+  </header>
+
+  <!-- MODELS -->
+  <section class="section" id="models">
+    <p class="section-label">The Lineup</p>
+    <div class="models">
+
+      <div class="model-card">
+        <p class="model-tag">Power</p>
+        <h2 class="model-name">Opus 4.8</h2>
+        <p class="model-desc">Your autonomous executor. Built for multi-step plans, terminal agents, and anything that requires unsupervised judgment over many turns.</p>
+        <ul class="model-specs">
+          <li>Ideal for <span>Agents, Deep Coding</span></li>
+          <li>Effort control <span>High</span></li>
+          <li>Speed on Fast Mode <span>2.5× standard</span></li>
+          <li>When to skip <span>Simple, repeatable tasks</span></li>
+        </ul>
+      </div>
+
+      <div class="model-card">
+        <p class="model-tag">Balance</p>
+        <h2 class="model-name">Sonnet 4.6</h2>
+        <p class="model-desc">The production default. Near-Opus intelligence at a fraction of the cost and latency. If you're unsure which model to reach for, start here.</p>
+        <ul class="model-specs">
+          <li>Ideal for <span>80% of daily tasks</span></li>
+          <li>Cost <span>Low vs. Opus</span></li>
+          <li>Latency <span>Fast</span></li>
+          <li>When to skip <span>Mass-volume API calls</span></li>
+        </ul>
+      </div>
+
+      <div class="model-card">
+        <p class="model-tag">Speed</p>
+        <h2 class="model-name">Haiku 4.5</h2>
+        <p class="model-desc">Pure throughput. When cost and latency are your only criteria — categorization, summarization, lightweight chat — Haiku wins every time.</p>
+        <ul class="model-specs">
+          <li>Ideal for <span>High-volume API</span></li>
+          <li>Cost <span>Lowest</span></li>
+          <li>Latency <span>Lowest</span></li>
+          <li>When to skip <span>Nuanced reasoning tasks</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- GOLDEN RULES -->
+  <section class="section" id="rules" style="padding-top:0;">
+    <p class="section-label">The Golden Rules</p>
+    <div class="rules">
+
+      <div class="rule-row">
+        <div class="rule-label"><span class="rule-label-inner">I</span></div>
+        <div class="rule-body">
+          <h3 class="rule-title">Structure with XML</h3>
+          <p class="rule-text">Claude is trained to parse XML. Wrapping your inputs in tags is the single most effective way to prevent hallucinations and keep focus locked.</p>
+          <div class="rule-example">
+            <strong>Use these</strong>
+            <code>&lt;context&gt;</code> for reference material &nbsp;·&nbsp;
+            <code>&lt;instructions&gt;</code> for commands &nbsp;·&nbsp;
+            <code>&lt;thinking&gt;</code> to surface reasoning &nbsp;·&nbsp;
+            <code>&lt;answer&gt;</code> for the final output
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-label"><span class="rule-label-inner">II</span></div>
+        <div class="rule-body">
+          <h3 class="rule-title">Tell it what to do</h3>
+          <p class="rule-text">Negative constraints confuse the attention mechanism. Replace every "don't" with a direct instruction about what you actually want.</p>
+          <div class="rule-example">
+            <strong>Weak → Strong</strong>
+            <span style="color:var(--text-muted)">✗ "Don't write fluff and don't use bullet points."</span><br/>
+            <span style="color:var(--text-primary)">✓ "Write in flowing prose paragraphs. Start directly with the core argument."</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-label"><span class="rule-label-inner">III</span></div>
+        <div class="rule-body">
+          <h3 class="rule-title">Let it think</h3>
+          <p class="rule-text">Opus 4.8 and Sonnet 4.6 use Adaptive Thinking — they determine their own reasoning depth. Stop prescribing steps. Tell Claude to "think thoroughly" and move the Effort slider. Its native path beats yours.</p>
+        </div>
+      </div>
+
+      <div class="rule-row">
+        <div class="rule-label"><span class="rule-label-inner">IV</span></div>
+        <div class="rule-body">
+          <h3 class="rule-title">Build the sandbox</h3>
+          <p class="rule-text">A question is the weakest prompt. Stack constraints to define exactly the space the model operates inside.</p>
+          <div class="rule-example">
+            <strong>Constraint stack</strong>
+            Persona → "Act as a Senior Staff Engineer reviewing a junior's PR."<br/>
+            Audience → "The reader is the executive board. No technical background."<br/>
+            Format → "Output valid JSON: <code>risk_level</code>, <code>summary</code>, <code>mitigation_steps</code>."
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WORKFLOWS -->
+  <section class="section" id="workflows" style="padding-top:0;">
+    <p class="section-label">Advanced Workflows</p>
+    <div class="workflows">
+
+      <div class="workflow-card">
+        <h3 class="workflow-title">Rubber Duck Debugging</h3>
+        <p class="workflow-text">Pasting an error and asking for a fix guarantees you learn nothing. Make Claude mentor you instead.</p>
+        <div class="workflow-prompt">"Here is the code and the error. Do NOT give me the fix. Ask me 1–2 guiding questions that help me find the root cause myself."</div>
+      </div>
+
+      <div class="workflow-card">
+        <h3 class="workflow-title">Self-Correction Loop</h3>
+        <p class="workflow-text">Models drop constraints in long outputs. Force an internal audit before the answer reaches you.</p>
+        <div class="workflow-prompt">"Draft the report. Before outputting, verify against these three criteria. If any fail, rewrite until all pass."</div>
+      </div>
+
+      <div class="workflow-card">
+        <h3 class="workflow-title">Knowledge Bridge</h3>
+        <p class="workflow-text">Learning something new? Anchor it to what you already know. Skip the textbook, get the 20% that covers 80% of your needs.</p>
+        <div class="workflow-prompt">"I know Pandas deeply. Explain [New Tool] by mapping its concepts directly to Pandas functions I already use."</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EFFORT / FAST MODE -->
+  <section class="section" id="effort" style="padding-top:0;">
+    <p class="section-label">Effort Control</p>
+    <div class="effort-grid">
+
+      <div class="effort-card">
+        <p class="effort-tag">High Effort</p>
+        <h3 class="effort-title">Think first, then write</h3>
+        <p class="effort-text">The model allocates additional compute before generating a single word. Use it when the cost of a wrong answer is high.</p>
+        <ul class="effort-uses">
+          <li>Mathematical proofs</li>
+          <li>Complex logic puzzles</li>
+          <li>Architectural code design</li>
+        </ul>
+      </div>
+
+      <div class="effort-card">
+        <p class="effort-tag">Fast Mode</p>
+        <h3 class="effort-title">2.5× speed. Lower cost.</h3>
+        <p class="effort-text">Fast Mode on Opus 4.8 runs at 2.5× the standard speed at significantly reduced cost. Reserve it for tasks where accuracy is not the bottleneck.</p>
+        <ul class="effort-uses">
+          <li>Copyediting &amp; translation</li>
+          <li>Data formatting</li>
+          <li>Meeting note summaries</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SURVEY -->
+  <section class="section" id="survey" style="padding-top:0;">
+    <p class="section-label">Find Your Model</p>
+
+    <div class="survey-wrap">
+      <div class="survey-header">
+        <h2>Four questions.</h2>
+        <p>Honest answers get you the right model. Wrong model costs you time and money.</p>
+      </div>
+
+      <div class="survey-progress-bar">
+        <div class="survey-progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+
+      <div class="survey-steps">
+
+        <div class="step active" data-step="1">
+          <p class="step-num">01 / 04</p>
+          <h3>What kind of task is this?</h3>
+          <div class="step-options">
+            <button class="opt-btn" data-val="autonomous">Multi-step or autonomous — agents, terminal tasks, unsupervised plans</button>
+            <button class="opt-btn" data-val="daily">Daily production work — code review, content, data analysis, prototyping</button>
+            <button class="opt-btn" data-val="volume">High-volume and lightweight — categorization, summarization, simple chat</button>
+            <button class="opt-btn" data-val="learning">Learning or research — understanding a new concept or framework</button>
+          </div>
+        </div>
+
+        <div class="step" data-step="2">
+          <p class="step-num">02 / 04</p>
+          <h3>How complex is the reasoning required?</h3>
+          <div class="step-options">
+            <button class="opt-btn" data-val="deep">Deep — mathematical proofs, architecture decisions, nuanced judgment</button>
+            <button class="opt-btn" data-val="moderate">Moderate — standard problem solving with some context-switching</button>
+            <button class="opt-btn" data-val="light">Minimal — the task is defined and repeatable</button>
+          </div>
+        </div>
+
+        <div class="step" data-step="3">
+          <p class="step-num">03 / 04</p>
+          <h3>What is your priority?</h3>
+          <div class="step-options">
+            <button class="opt-btn" data-val="accuracy">Accuracy above all — wrong answers are costly</button>
+            <button class="opt-btn" data-val="balance">Balance — good quality at reasonable speed and cost</button>
+            <button class="opt-btn" data-val="speed">Speed and cost — volume is high, latency matters most</button>
+          </div>
+        </div>
+
+        <div class="step" data-step="4">
+          <p class="step-num">04 / 04</p>
+          <h3>How will you run this?</h3>
+          <div class="step-options">
+            <button class="opt-btn" data-val="ui">Web interface or chat — using Claude.ai directly</button>
+            <button class="opt-btn" data-val="api">API — calling programmatically, cost per token matters</button>
+            <button class="opt-btn" data-val="agent">Agentic loop — Claude executes multiple tool calls in sequence</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="survey-nav">
+        <button class="btn-ghost" id="prevBtn" disabled>← Back</button>
+        <button class="btn-primary" id="nextBtn" disabled>Next</button>
+      </div>
+
+      <div class="result-wrap" id="resultWrap">
+        <p class="result-eyebrow">Your recommended model</p>
+        <div class="result-model" id="resultModel">—</div>
+        <p class="result-sub" id="resultSub"></p>
+        <div class="result-divider"></div>
+        <p class="result-reason" id="resultReason"></p>
+        <div class="result-tags" id="resultTags"></div>
+        <div class="result-tip" id="resultTip"></div>
+        <div><button class="btn-retry" id="retryBtn">Retake →</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-left">Dragontorpedo — Claude 2026 Guide</p>
+    <p class="footer-right">github.com/dragontorpedo</p>
+  </footer>
+
+<script>
+'use strict';
+
+const TOTAL = 4;
+let current = 1;
+let answers = {};
+
+const progressFill = document.getElementById('progressFill');
+const prevBtn      = document.getElementById('prevBtn');
+const nextBtn      = document.getElementById('nextBtn');
+const resultWrap   = document.getElementById('resultWrap');
+const retryBtn     = document.getElementById('retryBtn');
+
+function setProgress(step) {
+  progressFill.style.width = ((step - 1) / TOTAL * 100) + '%';
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const t = document.querySelector(`.step[data-step="${n}"]`);
+  if (t) t.classList.add('active');
+  prevBtn.disabled = (n === 1);
+  nextBtn.disabled = !answers[n];
+  nextBtn.textContent = (n === TOTAL) ? 'See Result' : 'Next';
+  setProgress(n);
+}
+
+document.querySelectorAll('.opt-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const step = parseInt(btn.closest('.step').dataset.step);
+    btn.closest('.step-options').querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[step] = btn.dataset.val;
+    nextBtn.disabled = false;
+  });
+});
+
+prevBtn.addEventListener('click', () => { if (current > 1) { current--; showStep(current); } });
+nextBtn.addEventListener('click', () => {
+  if (current < TOTAL) { current++; showStep(current); }
+  else showResult();
+});
+
+retryBtn.addEventListener('click', () => {
+  answers = {};
+  current = 1;
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  resultWrap.classList.remove('visible');
+  document.querySelector('.survey-nav').style.display = '';
+  document.querySelector('.survey-steps').style.display = '';
+  showStep(1);
+  progressFill.style.width = '0%';
+});
+
+function showResult() {
+  const a1 = answers[1];
+  const a2 = answers[2];
+  const a3 = answers[3];
+  const a4 = answers[4];
+
+  let model, sub, reason, tags, tip;
+
+  if (a1 === 'autonomous' || a4 === 'agent' || (a2 === 'deep' && a3 === 'accuracy')) {
+    model  = 'Claude Opus 4.8';
+    sub    = 'Power';
+    reason = 'Your task demands autonomous execution or deep unsupervised judgment. Opus 4.8 is built for multi-step plans, agentic loops, and anything that cannot afford to go off-script without recovery. It is the only model in the lineup that consistently handles dynamic replanning.';
+    tags   = ['Multi-step Agents', 'Deep Coding', 'High Effort', 'Autonomous'];
+    tip    = '<strong>Tip:</strong> Enable Fast Mode for any subtasks within the workflow that do not require deep reasoning — it runs at 2.5× speed and significantly reduces cost on volume.';
+
+  } else if (a1 === 'volume' || (a3 === 'speed' && a2 === 'light')) {
+    model  = 'Claude Haiku 4.5';
+    sub    = 'Speed';
+    reason = 'Your task is high-volume and reasoning is not the bottleneck. Haiku 4.5 is the fastest and cheapest model in the lineup — purpose-built for scale. Using a heavier model here wastes budget with no quality gain.';
+    tags   = ['High-volume API', 'Lowest Latency', 'Cost-efficient', 'Lightweight'];
+    tip    = '<strong>Tip:</strong> Pair Haiku with XML-structured prompts to maintain output consistency at scale — even a lightweight model stays disciplined with clear <code>&lt;instructions&gt;</code> tags.';
+
+  } else {
+    model  = 'Claude Sonnet 4.6';
+    sub    = 'Balance';
+    reason = 'Sonnet 4.6 is the production default for a reason — near-Opus intelligence at a fraction of the cost and latency. For daily work, content, code review, and analysis, it outperforms both extremes on the value curve. Start here unless you have a clear reason to move up or down.';
+    tags   = ['Code Review', 'Content', 'Data Analysis', 'Prototyping'];
+    tip    = '<strong>Tip:</strong> Use the Effort Control slider to scale reasoning depth within Sonnet — High Effort for architectural decisions, standard for everything else.';
+  }
+
+  document.getElementById('resultModel').textContent = model;
+  document.getElementById('resultSub').textContent   = sub;
+  document.getElementById('resultReason').textContent = reason;
+  document.getElementById('resultTip').innerHTML     = tip;
+
+  const tagsEl = document.getElementById('resultTags');
+  tagsEl.innerHTML = '';
+  tags.forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'result-tag';
+    s.textContent = t;
+    tagsEl.appendChild(s);
+  });
+
+  progressFill.style.width = '100%';
+  document.querySelector('.survey-steps').style.display = 'none';
+  document.querySelector('.survey-nav').style.display   = 'none';
+  resultWrap.classList.add('visible');
+}
+
+showStep(1);
+</script>
+</body>
+</html>
