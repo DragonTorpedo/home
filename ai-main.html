@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Compass — Find your bearing</title>
+<meta name="description" content="A 15-question instrument for figuring out which AI (or which combination) actually fits how you work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ==========================================================================
+   AI COMPASS — token system
+   Metaphor: a physical navigation instrument. Everything reads in bearings,
+   headings, and gauge-marks rather than generic numbered steps, because the
+   subject IS direction-finding.
+   ========================================================================== */
+
+:root{
+  /* ---- DAY: brushed-steel instrument panel in daylight ---- */
+  --paper: #E9EDE7;
+  --paper-raised: #F4F6F2;
+  --ink: #14241E;
+  --ink-soft: #47554D;
+  --line: #C4CEC3;
+  --line-strong: #9DAA9B;
+  --brass: #9C6B2A;
+  --brass-bright: #B8823A;
+  --teal: #23665A;
+  --teal-bright: #2E8A79;
+  --shadow: 220 30% 10%;
+  --glow-alpha: 0;
+
+  --c-chatgpt: #3E8F5B;
+  --c-claude: #4C64C4;
+  --c-gemini: #C4922A;
+  --c-grok: #62666D;
+  --c-zai: #8C4FBE;
+
+  --radius-s: 3px;
+  --radius-m: 6px;
+  --radius-l: 14px;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+html[data-theme="night"]{
+  --paper: #0E1815;
+  --paper-raised: #142520;
+  --ink: #DDE7E1;
+  --ink-soft: #8FA69B;
+  --line: #23372F;
+  --line-strong: #345143;
+  --brass: #D9A24B;
+  --brass-bright: #EFC078;
+  --teal: #4FB3A0;
+  --teal-bright: #6FD1BE;
+  --shadow: 0 0% 0%;
+  --glow-alpha: .35;
+
+  --c-chatgpt: #56B67A;
+  --c-claude: #7B92E8;
+  --c-gemini: #E0B33C;
+  --c-grok: #9AA0AC;
+  --c-zai: #B27EE0;
+}
+
+html[data-theme="bloodmoon"]{
+  --paper: #170707;
+  --paper-raised: #220A0A;
+  --ink: #F2DCDC;
+  --ink-soft: #B98686;
+  --line: #3C1414;
+  --line-strong: #5C1C1C;
+  --brass: #C1272D;
+  --brass-bright: #E24A44;
+  --teal: #9C2B2B;
+  --teal-bright: #C43B3B;
+  --shadow: 0 0% 0%;
+  --glow-alpha: .55;
+
+  --c-chatgpt: #C0685A;
+  --c-claude: #B25C7A;
+  --c-gemini: #D18A3E;
+  --c-grok: #8C6A6A;
+  --c-zai: #A6478F;
+}
+
+html[data-theme="eclipse"]{
+  --paper: #060606;
+  --paper-raised: #101010;
+  --ink: #ECECEC;
+  --ink-soft: #8E8E8E;
+  --line: #2A2A2A;
+  --line-strong: #414141;
+  --brass: #C9C9C9;
+  --brass-bright: #F2F2F2;
+  --teal: #7A7A7A;
+  --teal-bright: #ABABAB;
+  --shadow: 0 0% 0%;
+  --glow-alpha: .5;
+
+  --c-chatgpt: #9FBFA9;
+  --c-claude: #9AA6D6;
+  --c-gemini: #CDBB8E;
+  --c-grok: #B7B7B7;
+  --c-zai: #B79ED1;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+*{ box-sizing: border-box; margin:0; padding:0; }
+
+html{ scroll-behavior: smooth; }
+
+body{
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  transition: background .6s ease, color .6s ease;
+  overflow-x: hidden;
+}
+
+body::before{
+  /* faint chart-paper grid, the one constant across every theme */
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: .35;
+  transition: opacity .6s ease;
+}
+
+html[data-theme="night"] body::before,
+html[data-theme="bloodmoon"] body::before,
+html[data-theme="eclipse"] body::before{ opacity: .18; }
+
+a{ color: inherit; }
+
+img, svg{ display:block; max-width: 100%; }
+
+.wrap{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 1;
+}
+
+h1,h2,h3,h4{
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.mono{ font-family: var(--font-mono); }
+
+button{
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible{
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+/* ==========================================================================
+   Top bar
+   ========================================================================== */
+
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: .02em;
+}
+
+.brand .needle-mark{
+  width: 18px; height: 18px;
+  flex-shrink: 0;
+}
+
+.topnav{
+  display:flex;
+  align-items:center;
+  gap: 28px;
+}
+
+.topnav a{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-decoration:none;
+  color: var(--ink-soft);
+  transition: color .2s ease;
+}
+.topnav a:hover{ color: var(--brass-bright); }
+
+.theme-btn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper-raised);
+  transition: border-color .2s ease, transform .15s ease;
+  user-select: none;
+}
+.theme-btn:hover{ border-color: var(--brass); }
+.theme-btn:active{ transform: scale(.96); }
+.theme-btn .dot{
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--brass-bright);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brass-bright) 20%, transparent);
+}
+
+@media (max-width: 720px){
+  .topnav a{ display:none; }
+  .topbar{ padding: 14px 18px; }
+}
+
+/* ==========================================================================
+   Hero — the compass rose is the signature element
+   ========================================================================== */
+
+.hero{
+  padding: 88px 0 60px;
+  position: relative;
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 56px;
+  align-items:center;
+}
+
+.hero-eyebrow{ margin-bottom: 18px; }
+
+.hero h1{
+  font-size: clamp(38px, 5.4vw, 64px);
+  line-height: 1.03;
+  margin-bottom: 22px;
+}
+
+.hero h1 em{
+  font-style: normal;
+  color: var(--brass-bright);
+}
+
+.hero p.lede{
+  max-width: 46ch;
+  font-size: 17px;
+  color: var(--ink-soft);
+  margin-bottom: 34px;
+}
+
+.hero-ctas{
+  display:flex;
+  gap:16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap: 10px;
+  padding: 14px 26px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius-m);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px hsl(var(--shadow) / .25); }
+.btn-primary:active{ transform: translateY(0); }
+
+.btn-ghost{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 14px 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-m);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition: border-color .2s ease;
+}
+.btn-ghost:hover{ border-color: var(--brass); color: var(--brass-bright); }
+
+/* rose */
+.rose-wrap{
+  position: relative;
+  aspect-ratio: 1/1;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.rose-wrap svg{ width:100%; height:100%; }
+
+.rose-ring-outer{ fill:none; stroke: var(--line-strong); stroke-width: 1; }
+.rose-ring-inner{ fill:none; stroke: var(--line); stroke-width: 1; }
+.rose-tick{ stroke: var(--line-strong); stroke-width: 1; }
+.rose-tick-major{ stroke: var(--ink-soft); stroke-width: 1.4; }
+.rose-degree{ font-family: var(--font-mono); font-size: 9px; fill: var(--ink-soft); }
+
+.rose-needle{
+  transform-origin: 240px 240px;
+  transition: transform 1.4s cubic-bezier(.22,1,.28,1);
+  filter: drop-shadow(0 0 8px hsl(var(--shadow) / calc(var(--glow-alpha) * 0.6)));
+}
+
+.persona-node{ cursor: pointer; }
+.persona-node circle.halo{
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.persona-node:hover circle.halo{ opacity: .35; }
+.persona-node text{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  fill: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.rose-center-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+@media (max-width: 900px){
+  .hero-grid{ grid-template-columns: 1fr; }
+  .rose-wrap{ max-width: 340px; }
+}
+
+/* ==========================================================================
+   Section shell
+   ========================================================================== */
+
+.section{
+  padding: 78px 0;
+  border-top: 1px solid var(--line);
+}
+
+.section-head{
+  max-width: 640px;
+  margin-bottom: 44px;
+}
+
+.section-head h2{
+  font-size: clamp(26px, 3.4vw, 36px);
+  margin: 10px 0 14px;
+}
+
+.section-head p{
+  color: var(--ink-soft);
+  font-size: 15.5px;
+}
+
+.bearing-label{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   Personas — "The Five Directions"
+   ========================================================================== */
+
+.persona-grid{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  overflow: hidden;
+}
+
+.persona-card{
+  background: var(--paper-raised);
+  padding: 26px 20px 24px;
+  display:flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: background .2s ease;
+}
+.persona-card:hover{ background: color-mix(in srgb, var(--paper-raised) 70%, var(--paper) 30%); }
+
+.persona-card .bearing{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.persona-card .swatch{
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--paper);
+}
+
+.persona-card h3{
+  font-size: 17px;
+}
+.persona-card .role{
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--brass-bright);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.persona-card p.desc{
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  flex-grow: 1;
+}
+.persona-card ul{
+  list-style: none;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  display:flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.persona-card ul li{ padding-left: 14px; position: relative; }
+.persona-card ul li::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 7px;
+  width: 5px; height: 5px;
+  background: var(--brass);
+}
+
+@media (max-width: 980px){
+  .persona-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+  .persona-grid{ grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Categories reference
+   ========================================================================== */
+
+.cat-groups{
+  display:flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cat-group{
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  margin-bottom: 14px;
+  background: var(--paper-raised);
+}
+
+.cat-group-head{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  text-align:left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15.5px;
+}
+.cat-group-head .n{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-right: 12px;
+}
+.cat-group-head .chev{
+  font-family: var(--font-mono);
+  color: var(--brass-bright);
+  transition: transform .25s ease;
+}
+.cat-group.open .chev{ transform: rotate(45deg); }
+
+.cat-group-body{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .35s ease;
+}
+.cat-group.open .cat-group-body{ max-height: 900px; }
+
+.cat-row{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items:center;
+  padding: 14px 20px;
+  border-top: 1px solid var(--line);
+}
+.cat-row .cat-name{ font-size: 14px; }
+.cat-row .cat-note{ font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+.cat-row .cat-winner{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.cat-winner .dot{ width: 9px; height: 9px; border-radius: 50%; }
+
+@media (max-width: 640px){
+  .cat-row{ grid-template-columns: 1fr; }
+  .cat-row .cat-winner{ margin-top: 4px; }
+}
+
+/* ==========================================================================
+   Quiz
+   ========================================================================== */
+
+.quiz-shell{
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-l);
+  background: var(--paper-raised);
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 640px){
+  .quiz-shell{ padding: 24px 18px; }
+}
+
+.quiz-instrument{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+.heading-readout{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  letter-spacing: .05em;
+}
+.heading-readout b{ color: var(--brass-bright); font-size: 15px; }
+
+.gauge{
+  flex-grow: 1;
+  height: 3px;
+  background: var(--line);
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
+  max-width: 340px;
+}
+.gauge-fill{
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width: 0%;
+  background: linear-gradient(90deg, var(--teal), var(--brass-bright));
+  transition: width .45s cubic-bezier(.22,1,.28,1);
+}
+
+#quiz-intro, #quiz-result{
+  text-align: center;
+}
+#quiz-intro h3, #quiz-result h3{
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+#quiz-intro p{
+  color: var(--ink-soft);
+  max-width: 46ch;
+  margin: 0 auto 28px;
+}
+
+.question-block{ display:none; }
+.question-block.active{ display:block; animation: fadeUp .4s ease; }
+
+@keyframes fadeUp{
+  from{ opacity:0; transform: translateY(10px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+
+.question-block h3{
+  font-size: clamp(19px, 2.4vw, 24px);
+  margin-bottom: 22px;
+  line-height: 1.3;
+}
+
+.options{
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.option{
+  display:flex;
+  align-items:center;
+  gap: 14px;
+  padding: 15px 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-m);
+  text-align: left;
+  background: var(--paper);
+  transition: border-color .18s ease, background .18s ease, transform .12s ease;
+  font-size: 14.5px;
+}
+.option:hover{ border-color: var(--brass); transform: translateX(2px); }
+.option .radio{
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color .18s ease;
+}
+.option .radio::after{
+  content:"";
+  position:absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--brass-bright);
+  transform: scale(0);
+  transition: transform .15s ease;
+}
+.option.selected{
+  border-color: var(--brass-bright);
+  background: color-mix(in srgb, var(--brass-bright) 8%, var(--paper));
+}
+.option.selected .radio{ border-color: var(--brass-bright); }
+.option.selected .radio::after{ transform: scale(1); }
+
+.quiz-nav{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+}
+
+.quiz-nav .spacer{ flex-grow:1; }
+
+.btn-nav{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 12px 22px;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line-strong);
+  transition: opacity .2s ease, border-color .2s ease;
+}
+.btn-nav.back{ color: var(--ink-soft); }
+.btn-nav.next{ background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn-nav:disabled{ opacity: .35; cursor: not-allowed; }
+.btn-nav:not(:disabled):hover{ border-color: var(--brass); }
+
+/* results */
+#quiz-result{ display:none; }
+#quiz-result.active{ display:block; animation: fadeUp .5s ease; }
+
+.result-top{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.result-badge{
+  width: 92px; height: 92px;
+  border-radius: 50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--paper);
+  margin-bottom: 6px;
+}
+
+.result-bucket{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+}
+
+.result-bars{
+  display:flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 520px;
+  margin: 0 auto 36px;
+  text-align: left;
+}
+
+.result-bar-row{
+  display:grid;
+  grid-template-columns: 110px 1fr 46px;
+  align-items:center;
+  gap: 12px;
+}
+.result-bar-row .name{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  text-transform: uppercase;
+}
+.result-bar-track{
+  height: 8px;
+  background: var(--line);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.result-bar-fill{
+  height: 100%;
+  width: 0%;
+  border-radius: 5px;
+  transition: width 1s cubic-bezier(.22,1,.28,1);
+}
+.result-bar-row .pct{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+.result-copy{
+  text-align: left;
+  max-width: 620px;
+  margin: 0 auto 32px;
+  padding: 24px 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--paper);
+}
+.result-copy h4{
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+.result-copy p{ color: var(--ink-soft); font-size: 14px; margin-bottom: 14px; }
+.result-copy p:last-child{ margin-bottom: 0; }
+.result-copy .rec-line{
+  display:flex;
+  gap: 10px;
+  align-items:flex-start;
+  margin-bottom: 12px;
+}
+.result-copy .rec-line .dot{
+  width: 9px; height: 9px; border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.result-copy .rec-line b{ font-family: var(--font-display); }
+.result-copy .context-note{
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.result-actions{
+  display:flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   FAQ / footer
+   ========================================================================== */
+
+.faq{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px 40px;
+}
+.faq-item h4{ font-size: 15px; margin-bottom: 8px; }
+.faq-item p{ font-size: 13.5px; color: var(--ink-soft); }
+
+@media (max-width: 760px){
+  .faq{ grid-template-columns: 1fr; }
+}
+
+footer{
+  border-top: 1px solid var(--line);
+  padding: 40px 0 60px;
+}
+.footer-row{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+footer .fine{
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+/* bloodmoon / eclipse ambient flourish behind hero rose only — kept subtle, not electric */
+html[data-theme="bloodmoon"] .rose-wrap::after,
+html[data-theme="eclipse"] .rose-wrap::after{
+  content:"";
+  position:absolute;
+  inset: -12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--brass-bright) 18%, transparent), transparent 70%);
+  z-index: -1;
+}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <svg class="needle-mark" viewBox="0 0 20 20"><path d="M10 1 L13 10 L10 19 L7 10 Z" fill="var(--brass-bright)"/></svg>
+    AI COMPASS
+  </div>
+  <div class="topnav">
+    <a href="#directions">Directions</a>
+    <a href="#categories">Categories</a>
+    <a href="#quiz">Take Reading</a>
+    <button class="theme-btn" id="themeBtn" aria-label="Change theme">
+      <span class="dot" id="themeDot"></span>
+      <span id="themeLabel">Day</span>
+    </button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ============================= HERO ============================= -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow hero-eyebrow">A 15-question instrument · 5 possible headings</div>
+        <h1>Stop guessing which AI to open. <em>Take a reading.</em></h1>
+        <p class="lede">ChatGPT, Claude, Gemini, Grok, and Z.ai are each built for a different job. Most people use exactly one, out of habit, for everything. This finds out whether that's actually right for you — at work, at home, or both — and tells you straight whether you need one tool or a small stack of them.</p>
+        <div class="hero-ctas">
+          <a class="btn-primary" href="#quiz">Take the reading →</a>
+          <a class="btn-ghost" href="#directions">See the five directions</a>
+        </div>
+      </div>
+
+      <div class="rose-wrap">
+        <svg viewBox="0 0 480 480" id="heroRose">
+          <circle class="rose-ring-outer" cx="240" cy="240" r="220"/>
+          <circle class="rose-ring-inner" cx="240" cy="240" r="180"/>
+          <circle class="rose-ring-inner" cx="240" cy="240" r="130"/>
+          <g id="tickGroup"></g>
+          <g id="personaNodes"></g>
+          <g class="rose-needle" id="heroNeedle">
+            <path d="M240 60 L250 240 L240 260 L230 240 Z" fill="var(--brass-bright)"/>
+            <path d="M240 420 L250 240 L240 220 L230 240 Z" fill="var(--ink-soft)"/>
+            <circle cx="240" cy="240" r="9" fill="var(--paper-raised)" stroke="var(--brass-bright)" stroke-width="2"/>
+          </g>
+          <text x="240" y="245" text-anchor="middle" class="rose-center-label">FIND YOUR<tspan x="240" dy="12">HEADING</tspan></text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= DIRECTIONS ============================= -->
+  <section class="section" id="directions">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="bearing-label">§ 01 — THE FIVE DIRECTIONS</div>
+        <h2>Five instruments, five jobs</h2>
+        <p>None of these tools are "the best AI." Each one was tuned for a different kind of work. Here's the honest read on what each is actually for, before you even open the quiz.</p>
+      </div>
+
+      <div class="persona-grid" id="personaGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============================= CATEGORIES ============================= -->
+  <section class="section" id="categories">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="bearing-label">§ 02 — 20 TASK CATEGORIES</div>
+        <h2>The full reference chart</h2>
+        <p>The master list this whole site is built from — twenty everyday task categories, grouped by kind, each with the tool best suited to it. Use it as a lookup table any time you're mid-task and unsure where to go.</p>
+      </div>
+
+      <div class="cat-groups" id="catGroups"></div>
+    </div>
+  </section>
+
+  <!-- ============================= QUIZ ============================= -->
+  <section class="section" id="quiz">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="bearing-label">§ 03 — TAKE A READING</div>
+        <h2>15 questions. One heading.</h2>
+        <p>Answer honestly for how you actually work, not how you wish you worked. Some questions are about your job, some about your life outside it — the reading accounts for both.</p>
+      </div>
+
+      <div class="quiz-shell">
+
+        <div class="quiz-instrument" id="quizInstrument" style="display:none;">
+          <div class="heading-readout">CURRENT BEARING <b id="qNum">01</b> / 15</div>
+          <div class="gauge"><div class="gauge-fill" id="gaugeFill"></div></div>
+        </div>
+
+        <div id="quiz-intro">
+          <h3>Ready when you are.</h3>
+          <p>Takes about three minutes. At the end you'll get a full breakdown across all five tools, plus a straight answer on whether you need one AI or several.</p>
+          <button class="btn-primary" id="startBtn">Begin reading →</button>
+        </div>
+
+        <div id="questionContainer"></div>
+
+        <div class="quiz-nav" id="quizNav" style="display:none;">
+          <button class="btn-nav back" id="backBtn">← Back</button>
+          <div class="spacer"></div>
+          <button class="btn-nav next" id="nextBtn" disabled>Next →</button>
+        </div>
+
+        <div id="quiz-result">
+          <div class="result-top">
+            <div class="bearing-label" id="resultBearing">YOUR HEADING</div>
+            <div class="result-badge" id="resultBadge"></div>
+            <h3 id="resultTitle"></h3>
+            <div class="result-bucket" id="resultBucket"></div>
+          </div>
+
+          <div class="result-bars" id="resultBars"></div>
+
+          <div class="result-copy" id="resultCopy"></div>
+
+          <div class="result-actions">
+            <button class="btn-primary" id="retakeBtn">Retake the reading</button>
+            <a class="btn-ghost" href="#directions">Re-read the five directions</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= FAQ ============================= -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="bearing-label">§ 04 — READING THE INSTRUMENT</div>
+        <h2>Notes on using this</h2>
+      </div>
+      <div class="faq">
+        <div class="faq-item">
+          <h4>Why would I need more than one AI?</h4>
+          <p>Because "write me an email" and "refactor this repo" aren't the same job, and no single model is tuned for both. Most people who settle on one tool are optimizing for familiarity, not fit.</p>
+        </div>
+        <div class="faq-item">
+          <h4>My work answers and home answers would be different.</h4>
+          <p>That's expected. The first question sets your context, and the closing notes call out where work and home life would actually pull you toward different tools.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is this scored scientifically?</h4>
+          <p>No — it's a structured way of thinking through the same twenty task categories in the reference chart above, weighted by how you actually spend your week. Treat the result as a strong starting point, not gospel.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What's with the theme button?</h4>
+          <p>Day and night are the two intended readings. There's also a maintenance mode. You won't find it by reading the FAQ.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <div class="fine">AI COMPASS — an unofficial reference, not affiliated with OpenAI, Anthropic, Google, xAI, or Z.ai.</div>
+    <div class="fine" id="footerBearing">HEADING: DAY MODE</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ======================================================================
+   DATA — personas
+   ====================================================================== */
+
+const PERSONAS = [
+  {
+    key: "chatgpt",
+    name: "ChatGPT",
+    role: "The Talker",
+    bearing: "072°",
+    color: "var(--c-chatgpt)",
+    desc: "Conversational, fast, and warm. The one you actually enjoy talking to.",
+    strengths: ["Brainstorming out loud", "Emails & everyday writing", "Tutoring & study practice", "Daily productivity"]
+  },
+  {
+    key: "claude",
+    name: "Claude",
+    role: "The Architect",
+    bearing: "144°",
+    color: "var(--c-claude)",
+    desc: "Structural, precise, and unusually good at holding a lot of moving parts in mind at once.",
+    strengths: ["Coding & debugging", "Strategy & specs", "Legal & formal drafting", "Long-form creative writing"]
+  },
+  {
+    key: "gemini",
+    name: "Gemini",
+    role: "The Researcher",
+    bearing: "216°",
+    color: "var(--c-gemini)",
+    desc: "Deep context windows, live web access, native multimodal input. Built to synthesize.",
+    strengths: ["Research & fact-finding", "Large document/data analysis", "Video & long-file summarization", "Multimodal feedback"]
+  },
+  {
+    key: "grok",
+    name: "Grok",
+    role: "The Scout",
+    bearing: "288°",
+    color: "var(--c-grok)",
+    desc: "Plugged into what's happening right now. Edgier, faster to the trend, less filtered.",
+    strengths: ["Timely marketing angles", "Current-events roleplay", "Social hooks & threads", "Trend-aware takes"]
+  },
+  {
+    key: "zai",
+    name: "Z.ai",
+    role: "The Builder",
+    bearing: "360°",
+    color: "var(--c-zai)",
+    desc: "Built for scale and agentic execution — batch work and autonomous follow-through.",
+    strengths: ["Large-scale refactors", "Batch content generation", "Agentic task execution", "Workflow automation"]
+  }
+];
+
+const P = Object.fromEntries(PERSONAS.map(p => [p.key, p]));
+
+/* ======================================================================
+   DATA — 20 category reference (grouped, from the master playbook)
+   ====================================================================== */
+
+const CATEGORY_GROUPS = [
+  {
+    title: "Ideation & Planning",
+    items: [
+      { name: "Brainstorming", winner: "chatgpt", note: "Fast, conversational, good for bouncing ideas without overthinking." },
+      { name: "Strategy", winner: "claude", note: "Holds multiple variables at once and lays out frameworks step by step." },
+      { name: "Prompt writing", winner: "claude", note: "Deepest grasp of instruction-following makes it the best meta-prompter." },
+      { name: "Personal productivity & life hacks", winner: "chatgpt", note: "Best for quick everyday queries and routine-building." }
+    ]
+  },
+  {
+    title: "Technical & Analytical",
+    items: [
+      { name: "Coding", winner: "claude", note: "The current standard for clean, functional code from scratch." },
+      { name: "Fixing code", winner: "claude", note: "Best for isolated bugs; hand off to Z.ai when an agent needs to autonomously find and fix issues across a whole codebase." },
+      { name: "Data analysis", winner: "gemini", note: "Native workspace integration and huge context windows for spotting trends." },
+      { name: "UI/UX & design ideation", winner: "gemini", note: "Strong multimodal critique of wireframes; Claude for writing the design docs after." }
+    ]
+  },
+  {
+    title: "Written Communication",
+    items: [
+      { name: "Email writing", winner: "chatgpt", note: "Naturally conversational and human in tone." },
+      { name: "Resume & career development", winner: "claude", note: "Tight formatting and precise keyword tailoring without sounding generic." },
+      { name: "Marketing & copywriting", winner: "grok", note: "Edgy, real-time angles; Claude takes over for long-form landing pages." },
+      { name: "Legal & policy drafting", winner: "claude", note: "Literal and structured — least likely to drift into creative flourishes." }
+    ]
+  },
+  {
+    title: "Information & Synthesis",
+    items: [
+      { name: "Research", winner: "gemini", note: "Live web access and real-time synthesis of current events and papers." },
+      { name: "Summarization", winner: "gemini", note: "Best for huge documents/video; Claude for nuance-heavy, subtext-sensitive text." },
+      { name: "Learning & tutoring", winner: "chatgpt", note: "Patient, conversational, especially strong with voice mode." },
+      { name: "Translation & localization", winner: "claude", note: "Best grasp of cultural idiom and subtext, not just literal translation." }
+    ]
+  },
+  {
+    title: "Creative & Expressive",
+    items: [
+      { name: "Creative writing", winner: "claude", note: "The most human-sounding prose, with richer character work." },
+      { name: "Content creation", winner: "zai", note: "Best for batch-generating a month of content at once; Grok for timely threads." },
+      { name: "Roleplay & simulation", winner: "grok", note: "Strongest for current-events debate; ChatGPT for mock interviews and language practice." },
+      { name: "Event & project planning", winner: "claude", note: "Best at logical milestones and specs; Z.ai when an agent needs to execute the plan." }
+    ]
+  }
+];
+
+/* ======================================================================
+   DATA — 15 questions
+   Each option carries a points map across the 5 personas.
+   Q1 doubles as the "context" question (work / home / study / build).
+   ====================================================================== */
+
+const QUESTIONS = [
+  {
+    q: "What's the main reason you're here?",
+    context: true,
+    options: [
+      { label: "Getting through the workday", points: { claude:2, gemini:1 }, ctx: "work" },
+      { label: "Managing everyday life at home", points: { chatgpt:2 }, ctx: "home" },
+      { label: "Studying or learning something new", points: { chatgpt:1, claude:1 }, ctx: "study" },
+      { label: "Building a side project or business", points: { zai:2, grok:1 }, ctx: "build" }
+    ]
+  },
+  {
+    q: "When you sit down to write something, what's hardest to get right?",
+    options: [
+      { label: "Tone — making it sound human and warm", points: { chatgpt:3 } },
+      { label: "Structure — the logic has to hold together", points: { claude:3 } },
+      { label: "Accuracy — the facts have to be current", points: { gemini:3 } },
+      { label: "Edge — making it feel current and not generic", points: { grok:3 } }
+    ]
+  },
+  {
+    q: "Which describes your relationship with code?",
+    options: [
+      { label: "I don't write or touch code", points: { chatgpt:1 } },
+      { label: "I fix the occasional small bug", points: { claude:2 } },
+      { label: "I write and ship features regularly", points: { claude:3 } },
+      { label: "I need whole codebases refactored, hands-off", points: { zai:3, claude:1 } }
+    ]
+  },
+  {
+    q: "How do you prefer to learn something unfamiliar?",
+    options: [
+      { label: "Talk it out, back and forth", points: { chatgpt:3 } },
+      { label: "Read a clear, structured framework", points: { claude:3 } },
+      { label: "Get a synthesis pulled from a huge source", points: { gemini:3 } },
+      { label: "See what people are actually saying about it right now", points: { grok:3 } }
+    ]
+  },
+  {
+    q: "Which writing task shows up most in your week?",
+    options: [
+      { label: "Everyday emails and messages", points: { chatgpt:3 } },
+      { label: "Strategy docs, specs, or proposals", points: { claude:3 } },
+      { label: "Research write-ups or summaries", points: { gemini:3 } },
+      { label: "Social posts or threads", points: { grok:2, zai:1 } },
+      { label: "A whole content calendar at once", points: { zai:3 } }
+    ]
+  },
+  {
+    q: "How much raw material do you typically need processed at once?",
+    options: [
+      { label: "None really — mostly short questions", points: { chatgpt:2 } },
+      { label: "A document or two", points: { claude:2 } },
+      { label: "A big dataset or analysis", points: { gemini:3 } },
+      { label: "A huge multi-source workspace", points: { gemini:2, zai:1 } }
+    ]
+  },
+  {
+    q: "What matters most once a draft is finished?",
+    options: [
+      { label: "It feels warm and human", points: { chatgpt:3 } },
+      { label: "It's precise and well-structured", points: { claude:3 } },
+      { label: "It's current and well-sourced", points: { gemini:3 } },
+      { label: "It's timely and has an edge", points: { grok:3 } },
+      { label: "There's simply a lot of it, fast", points: { zai:3 } }
+    ]
+  },
+  {
+    q: "How often do you deal with legal or formal documents?",
+    options: [
+      { label: "Never", points: { chatgpt:1 } },
+      { label: "Occasionally — a contract or policy here and there", points: { claude:2 } },
+      { label: "Frequently — it's a real part of my work", points: { claude:3 } }
+    ]
+  },
+  {
+    q: "How much appetite do you have for creative writing?",
+    options: [
+      { label: "None, not really my thing", points: { chatgpt:1 } },
+      { label: "I dabble in short stories or posts", points: { claude:2 } },
+      { label: "I take fiction or worldbuilding seriously", points: { claude:3 } },
+      { label: "I need a large volume of scripted content fast", points: { zai:3 } }
+    ]
+  },
+  {
+    q: "Interested in AI for roleplay or simulation practice?",
+    options: [
+      { label: "Not really interested", points: { claude:1 } },
+      { label: "Mock interviews or language practice", points: { chatgpt:3 } },
+      { label: "Debating or simulating current events", points: { grok:3 } },
+      { label: "No preference either way", points: { chatgpt:1, claude:1 } }
+    ]
+  },
+  {
+    q: "How do you like to handle projects and tasks?",
+    options: [
+      { label: "I want the plan, then I'll execute it myself", points: { claude:3 } },
+      { label: "I want an agent actually executing tasks in my tools", points: { zai:3 } },
+      { label: "I just want the milestones laid out clearly", points: { claude:2 } }
+    ]
+  },
+  {
+    q: "What best describes your research habits?",
+    options: [
+      { label: "I ask a quick question and move on", points: { chatgpt:2 } },
+      { label: "I need deep synthesis with real sources", points: { gemini:3 } },
+      { label: "It has to be tied to live web or breaking news", points: { gemini:2, grok:2 } }
+    ]
+  },
+  {
+    q: "How often do you need translation or localization?",
+    options: [
+      { label: "Never", points: { chatgpt:1 } },
+      { label: "Sometimes, for basic accuracy", points: { gemini:1, claude:1 } },
+      { label: "Often, and cultural nuance really matters", points: { claude:3 } }
+    ]
+  },
+  {
+    q: "How many different AI tools do you already use regularly?",
+    options: [
+      { label: "None — this would be my first", points: { chatgpt:2 } },
+      { label: "Just one", points: { claude:1, chatgpt:1 } },
+      { label: "Two or three, for different things", points: { gemini:1, zai:1 } },
+      { label: "Four or more — I already run a stack", points: { zai:2, grok:1 } }
+    ]
+  },
+  {
+    q: "If you had to keep exactly one AI for the rest of the year, what would you miss most?",
+    options: [
+      { label: "Having a natural conversation partner", points: { chatgpt:3 } },
+      { label: "Serious coding and reasoning ability", points: { claude:3 } },
+      { label: "Deep research and current information", points: { gemini:3 } },
+      { label: "Creative writing quality", points: { claude:2, grok:1 } },
+      { label: "Automation and raw scale", points: { zai:3 } }
+    ]
+  }
+];
+
+const CONTEXT_NOTES = {
+  work: "You answered mostly from a work angle. On the job, lean toward your top pick(s) for anything structured or high-stakes — but keep something conversational like ChatGPT on hand for the small, fast stuff that doesn't deserve a heavyweight tool.",
+  home: "You answered mostly from a home angle. Outside of work, the conversational strengths of ChatGPT usually carry more weight than your quiz score alone suggests — day-to-day life runs on quick, easy back-and-forth more than deep structure.",
+  study: "You answered mostly from a learning angle. Pair a conversational tutor (ChatGPT) for the back-and-forth with a research-strong tool (Gemini) for anything that needs sourcing — that combination covers most study needs on its own.",
+  build: "You answered mostly from a building angle. Side projects and businesses tend to need an execution-focused stack — expect Z.ai or Claude to matter more here than your general score alone implies."
+};
+
+/* ======================================================================
+   RENDER — persona grid
+   ====================================================================== */
+
+const personaGrid = document.getElementById("personaGrid");
+PERSONAS.forEach(p => {
+  const card = document.createElement("div");
+  card.className = "persona-card";
+  card.innerHTML = `
+    <div class="bearing">BEARING ${p.bearing}</div>
+    <div class="swatch" style="background:${p.color}">${p.name[0]}</div>
+    <h3>${p.name}</h3>
+    <div class="role">${p.role}</div>
+    <p class="desc">${p.desc}</p>
+    <ul>${p.strengths.map(s => `<li>${s}</li>`).join("")}</ul>
+  `;
+  personaGrid.appendChild(card);
+});
+
+/* ======================================================================
+   RENDER — category reference (accordion)
+   ====================================================================== */
+
+const catGroups = document.getElementById("catGroups");
+CATEGORY_GROUPS.forEach((group, gi) => {
+  const el = document.createElement("div");
+  el.className = "cat-group" + (gi === 0 ? " open" : "");
+  const rows = group.items.map(item => {
+    const w = P[item.winner];
+    return `
+      <div class="cat-row">
+        <div>
+          <div class="cat-name">${item.name}</div>
+          <div class="cat-note">${item.note}</div>
+        </div>
+        <div class="cat-winner">
+          <span class="dot" style="background:${w.color}"></span>${w.name}
+        </div>
+      </div>`;
+  }).join("");
+  el.innerHTML = `
+    <button class="cat-group-head" type="button">
+      <span><span class="n">${String(gi+1).padStart(2,"0")}</span>${group.title}</span>
+      <span class="chev">+</span>
+    </button>
+    <div class="cat-group-body">${rows}</div>
+  `;
+  el.querySelector(".cat-group-head").addEventListener("click", () => {
+    const wasOpen = el.classList.contains("open");
+    document.querySelectorAll(".cat-group").forEach(g => g.classList.remove("open"));
+    if (!wasOpen) el.classList.add("open");
+  });
+  catGroups.appendChild(el);
+});
+
+/* ======================================================================
+   RENDER — hero compass rose (ticks + persona nodes)
+   ====================================================================== */
+
+const tickGroup = document.getElementById("tickGroup");
+for (let deg = 0; deg < 360; deg += 6) {
+  const major = deg % 30 === 0;
+  const r1 = 220, r2 = major ? 204 : 212;
+  const rad = (deg - 90) * Math.PI / 180;
+  const x1 = 240 + r1 * Math.cos(rad), y1 = 240 + r1 * Math.sin(rad);
+  const x2 = 240 + r2 * Math.cos(rad), y2 = 240 + r2 * Math.sin(rad);
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+  line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+  line.setAttribute("class", major ? "rose-tick-major" : "rose-tick");
+  tickGroup.appendChild(line);
+  if (major) {
+    const tx = 240 + 192 * Math.cos(rad), ty = 240 + 192 * Math.sin(rad);
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", tx); t.setAttribute("y", ty + 3);
+    t.setAttribute("text-anchor", "middle");
+    t.setAttribute("class", "rose-degree");
+    t.textContent = deg;
+    tickGroup.appendChild(t);
+  }
+}
+
+const personaNodes = document.getElementById("personaNodes");
+const NODE_ANGLES = { chatgpt: 0, claude: 72, gemini: 144, grok: 216, zai: 288 };
+PERSONAS.forEach(p => {
+  const deg = NODE_ANGLES[p.key];
+  const rad = (deg - 90) * Math.PI / 180;
+  const r = 150;
+  const x = 240 + r * Math.cos(rad), y = 240 + r * Math.sin(rad);
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.setAttribute("class", "persona-node");
+  g.innerHTML = `
+    <circle class="halo" cx="${x}" cy="${y}" r="20" fill="${p.color}"></circle>
+    <circle cx="${x}" cy="${y}" r="7" fill="${p.color}"></circle>
+    <text x="${x}" y="${y + (y > 240 ? 24 : -14)}" text-anchor="middle">${p.name}</text>
+  `;
+  g.addEventListener("click", () => {
+    document.getElementById("heroNeedle").style.transform = `rotate(${deg}deg)`;
+  });
+  personaNodes.appendChild(g);
+});
+
+// gentle idle sweep on load
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.getElementById("heroNeedle").style.transform = "rotate(144deg)";
+  }, 500);
+});
+
+/* ======================================================================
+   QUIZ ENGINE
+   ====================================================================== */
+
+const introEl = document.getElementById("quiz-intro");
+const resultEl = document.getElementById("quiz-result");
+const questionContainer = document.getElementById("questionContainer");
+const quizNav = document.getElementById("quizNav");
+const quizInstrument = document.getElementById("quizInstrument");
+const startBtn = document.getElementById("startBtn");
+const backBtn = document.getElementById("backBtn");
+const nextBtn = document.getElementById("nextBtn");
+const gaugeFill = document.getElementById("gaugeFill");
+const qNum = document.getElementById("qNum");
+const retakeBtn = document.getElementById("retakeBtn");
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let context = null;
+
+function buildQuestions() {
+  QUESTIONS.forEach((q, i) => {
+    const block = document.createElement("div");
+    block.className = "question-block";
+    block.dataset.index = i;
+    block.innerHTML = `
+      <h3>${q.q}</h3>
+      <div class="options">
+        ${q.options.map((opt, oi) => `
+          <button type="button" class="option" data-oi="${oi}">
+            <span class="radio"></span>
+            <span>${opt.label}</span>
+          </button>
+        `).join("")}
+      </div>
+    `;
+    block.querySelectorAll(".option").forEach(optBtn => {
+      optBtn.addEventListener("click", () => {
+        block.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+        optBtn.classList.add("selected");
+        answers[i] = parseInt(optBtn.dataset.oi, 10);
+        nextBtn.disabled = false;
+      });
+    });
+    questionContainer.appendChild(block);
+  });
+}
+buildQuestions();
+
+function showQuestion(i) {
+  document.querySelectorAll(".question-block").forEach(b => b.classList.remove("active"));
+  const block = questionContainer.querySelector(`[data-index="${i}"]`);
+  block.classList.add("active");
+  qNum.textContent = String(i + 1).padStart(2, "0");
+  gaugeFill.style.width = `${((i + 1) / QUESTIONS.length) * 100}%`;
+  nextBtn.disabled = answers[i] === null;
+  nextBtn.textContent = i === QUESTIONS.length - 1 ? "See my heading →" : "Next →";
+  backBtn.disabled = i === 0;
+}
+
+startBtn.addEventListener("click", () => {
+  introEl.style.display = "none";
+  quizInstrument.style.display = "flex";
+  quizNav.style.display = "flex";
+  current = 0;
+  showQuestion(0);
+});
+
+backBtn.addEventListener("click", () => {
+  if (current === 0) return;
+  current -= 1;
+  showQuestion(current);
+});
+
+nextBtn.addEventListener("click", () => {
+  if (answers[current] === null) return;
+  if (current < QUESTIONS.length - 1) {
+    current += 1;
+    showQuestion(current);
+  } else {
+    finishQuiz();
+  }
+});
+
+retakeBtn.addEventListener("click", () => {
+  answers = new Array(QUESTIONS.length).fill(null);
+  context = null;
+  current = 0;
+  resultEl.classList.remove("active");
+  questionContainer.style.display = "";
+  quizNav.style.display = "flex";
+  quizInstrument.style.display = "flex";
+  showQuestion(0);
+  document.getElementById("quiz").scrollIntoView({ behavior: "smooth" });
+});
+
+function finishQuiz() {
+  const scores = { chatgpt: 0, claude: 0, gemini: 0, grok: 0, zai: 0 };
+  QUESTIONS.forEach((q, i) => {
+    const opt = q.options[answers[i]];
+    if (!opt) return;
+    Object.entries(opt.points).forEach(([k, v]) => scores[k] += v);
+    if (q.context && opt.ctx) context = opt.ctx;
+  });
+
+  quizInstrument.style.display = "none";
+  quizNav.style.display = "none";
+  questionContainer.style.display = "none";
+  renderResult(scores);
+  resultEl.classList.add("active");
+}
+
+function renderResult(scores) {
+  const ranked = Object.entries(scores)
+    .map(([key, score]) => ({ ...P[key], score }))
+    .sort((a, b) => b.score - a.score);
+
+  const top = ranked[0];
+  const maxScore = top.score || 1;
+  const threshold = maxScore * 0.62;
+  const recommended = ranked.filter(r => r.score >= threshold && r.score > 0);
+  const count = Math.max(1, recommended.length);
+
+  const BUCKETS = {
+    1: { label: "The Purist", copy: "One tool covers what you actually need. Go deep on it rather than spreading thin." },
+    2: { label: "The Pair", copy: "Two tools, two clearly different jobs. That's a lean, sensible stack." },
+    3: { label: "The Trio", copy: "Three tools earn their place in your week. Reach for each one deliberately rather than defaulting to whichever tab is open." },
+    4: { label: "The Squad", copy: "Four tools genuinely fit how varied your work is. Keep a mental map of which one is for what, or the overlap gets wasteful." },
+    5: { label: "The Full Stack", copy: "All five score close together — your work is genuinely broad. Rotate deliberately by task rather than by habit." }
+  };
+  const bucket = BUCKETS[Math.min(count, 5)];
+
+  document.getElementById("resultBadge").style.background = top.color;
+  document.getElementById("resultBadge").textContent = top.name[0];
+  document.getElementById("resultTitle").textContent = `Your heading is ${top.name} — ${top.role}`;
+  document.getElementById("resultBucket").textContent = `${count} AI${count > 1 ? "s" : ""} recommended · ${bucket.label}`;
+
+  const barsEl = document.getElementById("resultBars");
+  barsEl.innerHTML = "";
+  ranked.forEach(r => {
+    const pct = Math.round((r.score / maxScore) * 100);
+    const row = document.createElement("div");
+    row.className = "result-bar-row";
+    row.innerHTML = `
+      <div class="name">${r.name}</div>
+      <div class="result-bar-track"><div class="result-bar-fill" style="background:${r.color}"></div></div>
+      <div class="pct">${r.score}</div>
+    `;
+    barsEl.appendChild(row);
+    requestAnimationFrame(() => {
+      row.querySelector(".result-bar-fill").style.width = `${Math.max(pct, 4)}%`;
+    });
+  });
+
+  const copyEl = document.getElementById("resultCopy");
+  const recLines = recommended.map(r => `
+    <div class="rec-line">
+      <span class="dot" style="background:${r.color}"></span>
+      <div><b>${r.name}</b> — ${r.strengths.slice(0, 2).join(" and ").toLowerCase()}.</div>
+    </div>
+  `).join("");
+
+  copyEl.innerHTML = `
+    <h4>What this means</h4>
+    <p>${bucket.copy}</p>
+    ${recLines}
+    ${context ? `<div class="context-note">${CONTEXT_NOTES[context]}</div>` : ""}
+  `;
+
+  // point the mini needle logic isn't needed here; reuse hero rose as a visual anchor
+  const deg = NODE_ANGLES[top.key];
+  document.getElementById("heroNeedle").style.transform = `rotate(${deg}deg)`;
+}
+
+/* ======================================================================
+   THEME ENGINE — day/night toggle, with a spam-click secret sequence
+   normal click:      day <-> night
+   rapid click burst: day/night -> bloodmoon -> eclipse -> back to day
+   ====================================================================== */
+
+const THEME_META = {
+  day:       { label: "Day",       dot: "#B8823A" },
+  night:     { label: "Night",     dot: "#D9A24B" },
+  bloodmoon: { label: "Bloodmoon", dot: "#E24A44" },
+  eclipse:   { label: "Eclipse",   dot: "#F2F2F2" }
+};
+
+const SECRET_SEQUENCE = ["bloodmoon", "eclipse", null]; // null = fall back to normal cycle
+
+let secretStep = 0;
+let clickTimes = [];
+const SPAM_WINDOW_MS = 2200;
+const SPAM_THRESHOLD = 6;
+
+const html = document.documentElement;
+const themeBtn = document.getElementById("themeBtn");
+const themeDot = document.getElementById("themeDot");
+const themeLabel = document.getElementById("themeLabel");
+const footerBearing = document.getElementById("footerBearing");
+
+function applyTheme(name) {
+  html.setAttribute("data-theme", name);
+  const meta = THEME_META[name];
+  themeDot.style.background = meta.dot;
+  themeLabel.textContent = meta.label;
+  footerBearing.textContent = `HEADING: ${meta.label.toUpperCase()} MODE`;
+}
+
+function normalToggle() {
+  const cur = html.getAttribute("data-theme");
+  const next = (cur === "day") ? "night" : "day";
+  applyTheme(next);
+}
+
+themeBtn.addEventListener("click", () => {
+  const now = Date.now();
+  clickTimes.push(now);
+  clickTimes = clickTimes.filter(t => now - t <= SPAM_WINDOW_MS);
+
+  if (clickTimes.length >= SPAM_THRESHOLD) {
+    const secretTarget = SECRET_SEQUENCE[secretStep % SECRET_SEQUENCE.length];
+    secretStep += 1;
+    clickTimes = [];
+    if (secretTarget === null) {
+      applyTheme("day");
+    } else {
+      applyTheme(secretTarget);
+    }
+    return;
+  }
+
+  normalToggle();
+});
+
+applyTheme("day");
+
+})();
+</script>
+</body>
+</html>
